@@ -9,6 +9,7 @@ import com.herlianzhang.mikropos.ui.home.HomeScreen
 import com.herlianzhang.mikropos.ui.home.HomeViewModel
 import com.herlianzhang.mikropos.ui.login.LoginScreen
 import com.herlianzhang.mikropos.ui.login.LoginViewModel
+import com.herlianzhang.mikropos.ui.productlist.ProductListScreen
 import com.herlianzhang.mikropos.ui.register.RegisterScreen
 import com.herlianzhang.mikropos.ui.register.RegisterViewModel
 
@@ -64,6 +65,7 @@ fun NavigationComponent(
         composable("home") {
             val viewModel = hiltViewModel<HomeViewModel>()
             HomeScreen(
+                navController,
                 viewModel,
                 navigateToLogin = {
                     navController.navigate("login") {
@@ -73,6 +75,9 @@ fun NavigationComponent(
                     }
                 }
             )
+        }
+        composable("product_list") {
+            ProductListScreen(navController)
         }
     }
 }
