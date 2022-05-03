@@ -38,7 +38,11 @@ class ApiCaller @Inject constructor(
 
     private fun getErrorMessage(json: String?): String? {
         if (json == null) return null
-        val adapter = gson.getAdapter(ApiError::class.java)
-        return adapter.fromJson(json).detail
+        return try {
+            val adapter = gson.getAdapter(ApiError::class.java)
+            adapter.fromJson(json).detail
+        } catch(e: Exception) {
+            null
+        }
     }
 }

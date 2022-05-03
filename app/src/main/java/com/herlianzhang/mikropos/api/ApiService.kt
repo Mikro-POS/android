@@ -1,11 +1,9 @@
 package com.herlianzhang.mikropos.api
 
+import com.herlianzhang.mikropos.vo.Product
 import com.herlianzhang.mikropos.vo.User
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ApiService {
     // user
@@ -21,4 +19,12 @@ interface ApiService {
     suspend fun register(
         @Body params: Map<String, Any>
     ): Response<User>
+
+    // product
+    @GET("products")
+    suspend fun getProducts(
+        @Query("limit") limit: Int = 10,
+        @Query("page") page: Int = 1,
+        @Query("search") search: String = ""
+    ): Response<List<Product>>
 }
