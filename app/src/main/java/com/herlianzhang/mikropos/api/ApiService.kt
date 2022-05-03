@@ -1,7 +1,9 @@
 package com.herlianzhang.mikropos.api
 
+import com.herlianzhang.mikropos.vo.ImageUrl
 import com.herlianzhang.mikropos.vo.Product
 import com.herlianzhang.mikropos.vo.User
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -27,4 +29,16 @@ interface ApiService {
         @Query("page") page: Int = 1,
         @Query("search") search: String = ""
     ): Response<List<Product>>
+
+    @POST("products")
+    @JvmSuppressWildcards
+    suspend fun createProduct(
+        @Body params: Map<String, Any>
+    ): Response<Product>
+
+    // default
+    @POST("/upload-image")
+    suspend fun uploadImage(
+        @Body body: RequestBody
+    ): Response<ImageUrl>
 }

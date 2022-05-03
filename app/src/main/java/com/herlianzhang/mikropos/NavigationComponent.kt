@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.herlianzhang.mikropos.ui.createproduct.CreateProduct
+import com.herlianzhang.mikropos.ui.createproduct.CreateProductViewModel
 import com.herlianzhang.mikropos.ui.home.HomeScreen
 import com.herlianzhang.mikropos.ui.home.HomeViewModel
 import com.herlianzhang.mikropos.ui.login.LoginScreen
@@ -22,8 +23,8 @@ fun NavigationComponent(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "product_list"
-//        startDestination = if (isAuthenticated) "home" else "login"
+//        startDestination = "create_product"
+        startDestination = if (isAuthenticated) "home" else "login"
     ) {
         composable("login") {
             val viewModel = hiltViewModel<LoginViewModel>()
@@ -84,7 +85,8 @@ fun NavigationComponent(
             ProductListScreen(navController, viewModel)
         }
         composable("create_product") {
-            CreateProduct(navController)
+            val viewModel = hiltViewModel<CreateProductViewModel>()
+            CreateProduct(navController, viewModel)
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.herlianzhang.mikropos.api
 
-import android.content.Context
 import com.herlianzhang.mikropos.utils.UserPreferences
 import okhttp3.Interceptor
 import okhttp3.Response

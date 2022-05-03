@@ -3,6 +3,8 @@ package com.herlianzhang.mikropos.ui.register
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -11,7 +13,10 @@ import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -40,6 +45,7 @@ fun RegisterScreen(
     var isPasswordVisible by remember {
         mutableStateOf(false)
     }
+    val localFocusManager = LocalFocusManager.current
     val scaffoldState = rememberScaffoldState()
     val isLoading by viewModel.isLoading.collectAsState()
     LaunchedEffect(key1 = Unit) {
@@ -89,6 +95,10 @@ fun RegisterScreen(
                             Text("Username")
                         },
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(
+                            onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
+                        ),
                         onValueChange = { username = it.replace(" ", "") }
                     )
 
@@ -100,6 +110,10 @@ fun RegisterScreen(
                             Text("Nama")
                         },
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(
+                            onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
+                        ),
                         onValueChange = { name = it }
                     )
 
@@ -111,6 +125,10 @@ fun RegisterScreen(
                             Text("Alamat")
                         },
                         maxLines = 5,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(
+                            onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
+                        ),
                         onValueChange = { address = it }
                     )
 
@@ -133,6 +151,19 @@ fun RegisterScreen(
                                 )
                             }
                         },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                localFocusManager.clearFocus()
+                                if (username.isNotBlank() and password.isNotBlank() and name.isNotBlank())
+                                    viewModel.register(
+                                        username,
+                                        name,
+                                        address,
+                                        password
+                                    )
+                            }
+                        ),
                         onValueChange = { password = it.replace(" ", "") }
                     )
                 }
@@ -161,7 +192,7 @@ fun RegisterScreen(
             LoadingView(isLoading)
             DefaultSnackbar(
                 snackbarHostState = scaffoldState.snackbarHostState,
-                modifier = Modifier.align(Alignment.TopCenter)
+                modifier = Modifier.align(Alignment.BottomCenter)
             ) {
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }

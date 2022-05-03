@@ -49,12 +49,14 @@ class ProductListViewModel @Inject constructor(
         getProducts()
     }
 
-    fun search(value: String) {
+    fun search(value: String, check: Boolean = true) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            delay(1000)
-            if (value == search)
-                return@launch
+            if (check) {
+                delay(1000)
+                if (value == search)
+                    return@launch
+            }
             search = value
             page = 1
             isLastPage = false
@@ -75,15 +77,6 @@ class ProductListViewModel @Inject constructor(
             _isError.emit(false)
             getProducts()
         }
-    }
-
-    suspend fun addNewProduct(product: Product) {
-        if (!product.name.lowercase().contains(search.lowercase()))
-            return
-        val products = _products.value.toMutableList()
-        products.add(0, product)
-        products.sortBy { it.name.lowercase() }
-        _products.emit(products)
     }
 
     private fun getProducts() {

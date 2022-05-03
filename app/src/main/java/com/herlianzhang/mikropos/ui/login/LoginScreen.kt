@@ -3,6 +3,8 @@ package com.herlianzhang.mikropos.ui.login
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -11,7 +13,10 @@ import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -34,6 +39,7 @@ fun LoginScreen(
     var isPasswordVisible by remember {
         mutableStateOf(false)
     }
+    val localFocusManager = LocalFocusManager.current
     val scaffoldState = rememberScaffoldState()
     val isLoading by viewModel.isLoading.collectAsState()
 
@@ -84,6 +90,10 @@ fun LoginScreen(
                             Text("Username")
                         },
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(
+                            onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
+                        ),
                         onValueChange = { username = it.replace(" ", "") }
                     )
 
@@ -106,6 +116,14 @@ fun LoginScreen(
                                 )
                             }
                         },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                localFocusManager.clearFocus()
+                                if (username.isNotBlank() and password.isNotBlank())
+                                    viewModel.login(username,  password)
+                            }
+                        ),
                         onValueChange = { password = it.replace(" ", "") }
                     )
                 }

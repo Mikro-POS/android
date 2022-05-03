@@ -94,11 +94,11 @@ fun ProductListScreen(
     val isLoadMore by viewModel.isLoadMore.collectAsState()
     val isError by viewModel.isError.collectAsState()
 
-    navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Product>("new_data")?.let {
+    navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Product>("refresh_products")?.let {
         val newData by it.observeAsState()
         LaunchedEffect(newData) {
-            val product = newData ?: return@LaunchedEffect
-            viewModel.addNewProduct(product)
+            newData ?: return@LaunchedEffect
+            viewModel.search(search, false)
         }
     }
 
