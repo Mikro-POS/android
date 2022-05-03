@@ -1,12 +1,14 @@
 package com.herlianzhang.mikropos.api
 
 import android.content.ContentResolver
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okio.BufferedSink
-import okio.source
+import java.io.ByteArrayOutputStream
 
 class InputStreamRequestBody(
     private val uri: Uri,
@@ -18,8 +20,9 @@ class InputStreamRequestBody(
 
     override fun writeTo(sink: BufferedSink) {
         val input = contentResolver.openInputStream(uri)
-        input?.use {
-            sink.writeAll(input.source())
-        }
+        val baos = ByteArrayOutputStream()
+        val bitmap = BitmapFactory.decodeStream(input)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos)
+        sink.write(baos.toByteArray())
     }
 }

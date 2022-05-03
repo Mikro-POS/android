@@ -11,6 +11,7 @@ import com.herlianzhang.mikropos.repository.ImageRepository
 import com.herlianzhang.mikropos.repository.ProductRepository
 import com.herlianzhang.mikropos.vo.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -49,7 +50,7 @@ class CreateProductViewModel @Inject constructor(
 
     fun uploadImage(uri: Uri) {
         uploadJob?.cancel()
-        uploadJob = viewModelScope.launch {
+        uploadJob = viewModelScope.launch(Dispatchers.IO) {
             imageRepository.uploadImage(uri, getImageDisplayName(uri)).collect { result ->
                 when(result) {
                     is ApiResult.Loading -> _isUploadingImage.emit(result.state.value)

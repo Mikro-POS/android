@@ -3,14 +3,18 @@ package com.herlianzhang.mikropos
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.herlianzhang.mikropos.ui.common.QrScannerScreen
 import com.herlianzhang.mikropos.ui.createproduct.CreateProduct
 import com.herlianzhang.mikropos.ui.createproduct.CreateProductViewModel
 import com.herlianzhang.mikropos.ui.home.HomeScreen
 import com.herlianzhang.mikropos.ui.home.HomeViewModel
 import com.herlianzhang.mikropos.ui.login.LoginScreen
 import com.herlianzhang.mikropos.ui.login.LoginViewModel
+import com.herlianzhang.mikropos.ui.productdetail.ProductDetailScreen
 import com.herlianzhang.mikropos.ui.productlist.ProductListScreen
 import com.herlianzhang.mikropos.ui.productlist.ProductListViewModel
 import com.herlianzhang.mikropos.ui.register.RegisterScreen
@@ -23,7 +27,7 @@ fun NavigationComponent(
 ) {
     NavHost(
         navController = navController,
-//        startDestination = "create_product"
+//        startDestination = "product_list"
         startDestination = if (isAuthenticated) "home" else "login"
     ) {
         composable("login") {
@@ -87,6 +91,17 @@ fun NavigationComponent(
         composable("create_product") {
             val viewModel = hiltViewModel<CreateProductViewModel>()
             CreateProduct(navController, viewModel)
+        }
+        composable(
+            "product_detail/{productId}",
+            arguments = listOf(navArgument("productId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getInt("productId")?.let { id ->
+                ProductDetailScreen(id)
+            }
+        }
+        composable("qr_scanner") {
+            QrScannerScreen(navController)
         }
     }
 }

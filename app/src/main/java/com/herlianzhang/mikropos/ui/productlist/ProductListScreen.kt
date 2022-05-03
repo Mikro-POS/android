@@ -38,14 +38,17 @@ import com.herlianzhang.mikropos.vo.Product
 @Composable
 fun ProductItem(
     product: Product,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClicked: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .clickable { }
+            .clickable {
+                onClicked()
+            }
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         AsyncImage(
@@ -93,6 +96,15 @@ fun ProductListScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val isLoadMore by viewModel.isLoadMore.collectAsState()
     val isError by viewModel.isError.collectAsState()
+
+    navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("qr-result")?.let {
+        val newData by it.observeAsState()
+        LaunchedEffect(newData) {
+            val data = newData ?: return@LaunchedEffect
+            search = data
+            viewModel.search(data)
+        }
+    }
 
     navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Product>("refresh_products")?.let {
         val newData by it.observeAsState()
@@ -157,7 +169,7 @@ fun ProductListScreen(
                         ),
                         singleLine = true
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navController.navigate("qr_scanner") }) {
                         Icon(Icons.Rounded.QrCodeScanner, contentDescription = null)
                     }
                 }
@@ -173,7 +185,10 @@ fun ProductListScreen(
                     items(products) { item ->
                         ProductItem(
                             item,
-                            Modifier.animateItemPlacement()
+                            Modifier.animateItemPlacement(),
+                            onClicked = {
+                                navController.navigate("product_detail/${item.id}")
+                            }
                         )
                     }
                     if (isLoadMore) {

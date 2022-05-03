@@ -22,6 +22,8 @@ import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ import com.herlianzhang.mikropos.ui.common.LoadingView
 import com.herlianzhang.mikropos.ui.common.UploadImageLoadingView
 import com.herlianzhang.mikropos.utils.CurrencyVisualTransformation
 import com.herlianzhang.mikropos.utils.inputCurrency
+import com.herlianzhang.mikropos.vo.Product
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -49,19 +52,19 @@ fun CreateProduct(
     viewModel: CreateProductViewModel
 ) {
     val localFocusManager = LocalFocusManager.current
-    var name by remember {
+    var name by rememberSaveable {
         mutableStateOf("")
     }
-    var price by remember {
+    var price by rememberSaveable {
         mutableStateOf("")
     }
-    var sku by remember {
+    var sku by rememberSaveable {
         mutableStateOf("")
     }
-    var imageUri by remember {
+    var imageUri by rememberSaveable {
         mutableStateOf<Uri?>(null)
     }
-    val bitmap =  remember {
+    val bitmap =  rememberSaveable {
         mutableStateOf<Bitmap?>(null)
     }
     val scaffoldState = rememberScaffoldState()
@@ -72,6 +75,14 @@ fun CreateProduct(
         uri ?: return@rememberLauncherForActivityResult
         imageUri = uri
         viewModel.uploadImage(uri)
+    }
+
+    navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("qr-result")?.let {
+        val newData by it.observeAsState()
+        LaunchedEffect(newData) {
+            val data = newData ?: return@LaunchedEffect
+            sku = data
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -228,7 +239,7 @@ fun CreateProduct(
                         ),
                         onValueChange = { sku = it }
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navController.navigate("qr_scanner") }) {
                         Icon(Icons.Rounded.QrCodeScanner, contentDescription = null)
                     }
                 }
