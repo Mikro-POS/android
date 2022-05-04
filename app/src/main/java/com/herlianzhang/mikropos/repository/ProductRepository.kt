@@ -17,10 +17,22 @@ class ProductRepository @Inject constructor(
     ) = apiCaller {
         apiService.getProducts(page = page, limit = limit, search = search)
     }
+    fun getProduct(
+        id: Int
+    ) = apiCaller {
+        apiService.getProduct(id)
+    }
 
-    fun crateProduct(
+    fun createProduct(
         params: Map<String, Any>
     ) = apiCaller {
         apiService.createProduct(params)
+    }
+
+    fun updateProduct(
+        id: Int,
+        params: Map<String, Any>
+    ) = apiCaller {
+        apiService.updateProduct(id, params)
     }
 }

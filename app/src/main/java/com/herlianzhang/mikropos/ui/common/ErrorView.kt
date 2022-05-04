@@ -37,7 +37,7 @@ fun ErrorView(isShow: Boolean, onClick: () -> Unit) {
     val alpha = animateFloatAsState(if (isShow) 0.3f else 0f)
     val modifier = Modifier
         .fillMaxSize()
-        .background(Color.Black.copy(alpha.value))
+        .background(MaterialTheme.colors.onBackground.copy(alpha.value))
 
     Box(
         modifier = if (!isShow) modifier else modifier
@@ -54,7 +54,7 @@ fun ErrorView(isShow: Boolean, onClick: () -> Unit) {
                 .width(320.dp)
                 .scale(scale.value)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.White),
+                .background(MaterialTheme.colors.background),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {

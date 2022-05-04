@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,7 +42,7 @@ import com.herlianzhang.mikropos.utils.inputCurrency
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun CreateProduct(
+fun CreateProductScreen(
     navController: NavController,
     viewModel: CreateProductViewModel
 ) {
@@ -127,7 +128,7 @@ fun CreateProduct(
             Column(
                 modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
+                verticalArrangement = Arrangement.spacedBy(32.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -164,7 +165,10 @@ fun CreateProduct(
                         Text("Nama Produk")
                     },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Next
+                    ),
                     keyboardActions = KeyboardActions(
                         onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
                     ),

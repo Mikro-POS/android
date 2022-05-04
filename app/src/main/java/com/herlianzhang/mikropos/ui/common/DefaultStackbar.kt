@@ -32,8 +32,7 @@ fun DefaultSnackbar(
         ) {
             Text(
                 text = data.message,
-                style = MaterialTheme.typography.body2,
-                color = Color.White
+                style = MaterialTheme.typography.body2
             )
         }
     }

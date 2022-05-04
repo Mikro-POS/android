@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropDown
@@ -27,7 +28,7 @@ fun CreateTransactionScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(width = 2.dp, color = Color.Black, shape = RoundedCornerShape(12.dp))
+                .border(width = 2.dp, color = MaterialTheme.colors.onBackground, shape = RoundedCornerShape(12.dp))
                 .clip(RoundedCornerShape(12.dp))
                 .clickable {
 

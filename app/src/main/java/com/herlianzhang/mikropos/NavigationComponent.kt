@@ -8,13 +8,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.herlianzhang.mikropos.ui.common.QrScannerScreen
-import com.herlianzhang.mikropos.ui.createproduct.CreateProduct
+import com.herlianzhang.mikropos.ui.createproduct.CreateProductScreen
 import com.herlianzhang.mikropos.ui.createproduct.CreateProductViewModel
 import com.herlianzhang.mikropos.ui.home.HomeScreen
 import com.herlianzhang.mikropos.ui.home.HomeViewModel
 import com.herlianzhang.mikropos.ui.login.LoginScreen
 import com.herlianzhang.mikropos.ui.login.LoginViewModel
 import com.herlianzhang.mikropos.ui.productdetail.ProductDetailScreen
+import com.herlianzhang.mikropos.ui.productdetail.ProductDetailViewModel
 import com.herlianzhang.mikropos.ui.productlist.ProductListScreen
 import com.herlianzhang.mikropos.ui.productlist.ProductListViewModel
 import com.herlianzhang.mikropos.ui.register.RegisterScreen
@@ -27,8 +28,8 @@ fun NavigationComponent(
 ) {
     NavHost(
         navController = navController,
-//        startDestination = "product_list"
-        startDestination = if (isAuthenticated) "home" else "login"
+        startDestination = "product_list"
+//        startDestination = if (isAuthenticated) "home" else "login"
     ) {
         composable("login") {
             val viewModel = hiltViewModel<LoginViewModel>()
@@ -90,14 +91,15 @@ fun NavigationComponent(
         }
         composable("create_product") {
             val viewModel = hiltViewModel<CreateProductViewModel>()
-            CreateProduct(navController, viewModel)
+            CreateProductScreen(navController, viewModel)
         }
         composable(
             "product_detail/{productId}",
             arguments = listOf(navArgument("productId") { type = NavType.IntType })
         ) { backStackEntry ->
             backStackEntry.arguments?.getInt("productId")?.let { id ->
-                ProductDetailScreen(id)
+                val viewModel = hiltViewModel<ProductDetailViewModel>()
+                ProductDetailScreen(id, navController, viewModel)
             }
         }
         composable("qr_scanner") {

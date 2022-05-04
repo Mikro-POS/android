@@ -91,7 +91,7 @@ class CreateProductViewModel @Inject constructor(
             params["photo"] = url
         }
         viewModelScope.launch {
-            productRepository.crateProduct(params).collect { result ->
+            productRepository.createProduct(params).collect { result ->
                 when(result) {
                     is ApiResult.Loading -> _isLoading.emit(result.state.value)
                     is ApiResult.Failed -> _event.send(CreateProductEvent.ShowErrorSnackbar(result.message))
