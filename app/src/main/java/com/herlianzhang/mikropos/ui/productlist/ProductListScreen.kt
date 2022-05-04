@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,6 @@ import com.herlianzhang.mikropos.ui.common.EmptyView
 import com.herlianzhang.mikropos.ui.common.ErrorView
 import com.herlianzhang.mikropos.ui.common.LoadMoreView
 import com.herlianzhang.mikropos.ui.common.LoadingView
-import com.herlianzhang.mikropos.utils.isScrollToTheEnd
 import com.herlianzhang.mikropos.utils.toRupiah
 import com.herlianzhang.mikropos.vo.Product
 
@@ -57,7 +57,8 @@ fun ProductItem(
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(Color.LightGray)
+                .background(Color.LightGray),
+            contentScale = ContentScale.Crop
         )
         Column(
             modifier = Modifier.weight(1f),
@@ -97,26 +98,26 @@ fun ProductListScreen(
     val isLoadMore by viewModel.isLoadMore.collectAsState()
     val isError by viewModel.isError.collectAsState()
 
-    navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("qr-result")?.let {
-        val newData by it.observeAsState()
-        LaunchedEffect(newData) {
-            val data = newData ?: return@LaunchedEffect
-            search = data
-            viewModel.search(data)
+    navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
+        savedState.getLiveData<String>("qr-result").let {
+            val newData by it.observeAsState()
+            LaunchedEffect(newData) {
+                val data = newData ?: return@LaunchedEffect
+                search = data
+                viewModel.search(data, false)
+                savedState.remove<String>("qr-result")
+            }
         }
     }
 
-    navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Product>("refresh_products")?.let {
-        val newData by it.observeAsState()
-        LaunchedEffect(newData) {
-            newData ?: return@LaunchedEffect
-            viewModel.search(search, false)
-        }
-    }
-
-    LaunchedEffect(listState.isScrollToTheEnd()) {
-        if (listState.isScrollInProgress) {
-            viewModel.loadMore()
+    navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
+        savedState.getLiveData<Product>("refresh_products").let {
+            val newData by it.observeAsState()
+            LaunchedEffect(newData) {
+                newData ?: return@LaunchedEffect
+                viewModel.search(search, false)
+                savedState.remove<Product>("refresh_products")
+            }
         }
     }
 
@@ -194,6 +195,9 @@ fun ProductListScreen(
                     if (isLoadMore) {
                         item {
                             LoadMoreView(isLoadMore)
+                            LaunchedEffect(true) {
+                                viewModel.loadMore()
+                            }
                         }
                     }
                     item {

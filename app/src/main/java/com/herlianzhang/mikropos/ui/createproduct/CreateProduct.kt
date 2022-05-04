@@ -1,10 +1,6 @@
 package com.herlianzhang.mikropos.ui.createproduct
 
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -31,7 +27,6 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,7 +38,6 @@ import com.herlianzhang.mikropos.ui.common.LoadingView
 import com.herlianzhang.mikropos.ui.common.UploadImageLoadingView
 import com.herlianzhang.mikropos.utils.CurrencyVisualTransformation
 import com.herlianzhang.mikropos.utils.inputCurrency
-import com.herlianzhang.mikropos.vo.Product
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -61,27 +55,24 @@ fun CreateProduct(
     var sku by rememberSaveable {
         mutableStateOf("")
     }
-    var imageUri by rememberSaveable {
-        mutableStateOf<Uri?>(null)
-    }
-    val bitmap =  rememberSaveable {
-        mutableStateOf<Bitmap?>(null)
-    }
+    val bitmap by viewModel.bitmap.collectAsState()
     val scaffoldState = rememberScaffoldState()
     val isLoading by viewModel.isLoading.collectAsState()
     val isUploadingImage by viewModel.isUploadingImage.collectAsState()
-    val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri ?: return@rememberLauncherForActivityResult
-        imageUri = uri
-        viewModel.uploadImage(uri)
-    }
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri ?: return@rememberLauncherForActivityResult
+            viewModel.uploadImage(uri)
+        }
 
-    navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("qr-result")?.let {
-        val newData by it.observeAsState()
-        LaunchedEffect(newData) {
-            val data = newData ?: return@LaunchedEffect
-            sku = data
+    navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
+        savedState.getLiveData<String>("qr-result").let {
+            val newData by it.observeAsState()
+            LaunchedEffect(newData) {
+                val data = newData ?: return@LaunchedEffect
+                sku = data
+                savedState.remove<String>("qr-result")
+            }
         }
     }
 
@@ -89,12 +80,14 @@ fun CreateProduct(
         viewModel.event.collectLatest { event ->
             when (event) {
                 is CreateProductEvent.ShowErrorSnackbar -> {
-                    imageUri = event.uri
                     val message = event.message ?: return@collectLatest
                     scaffoldState.snackbarHostState.showSnackbar(message)
                 }
                 is CreateProductEvent.BackWithResult -> {
-                    navController.previousBackStackEntry?.savedStateHandle?.set("refresh_products", event.product)
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "refresh_products",
+                        event.product
+                    )
                     navController.popBackStack()
                 }
             }
@@ -150,26 +143,15 @@ fun CreateProduct(
                         Icons.Rounded.AddPhotoAlternate,
                         modifier = Modifier.size(48.dp),
                         tint = Color.Gray,
-                        contentDescription = null)
-                    imageUri?.let {
-                        if (Build.VERSION.SDK_INT < 28) {
-                            bitmap.value = MediaStore.Images
-                                .Media.getBitmap(context.contentResolver,it)
-
-                        } else {
-                            val source = ImageDecoder
-                                .createSource(context.contentResolver,it)
-                            bitmap.value = ImageDecoder.decodeBitmap(source)
-                        }
-
-                        bitmap.value?.let {  btm ->
-                            Image(
-                                bitmap = btm.asImageBitmap(),
-                                contentScale = ContentScale.Crop,
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
+                        contentDescription = null
+                    )
+                    bitmap?.let {
+                        Image(
+                            it.asImageBitmap(),
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
                     UploadImageLoadingView(isUploadingImage)
                 }
@@ -186,7 +168,7 @@ fun CreateProduct(
                     keyboardActions = KeyboardActions(
                         onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
                     ),
-                    onValueChange = { name = it}
+                    onValueChange = { name = it }
                 )
 
                 OutlinedTextField(

@@ -1,7 +1,11 @@
 package com.herlianzhang.mikropos.ui.createproduct
 
 import android.app.Application
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.provider.MediaStore.Images.Media.DISPLAY_NAME
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,10 +23,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 sealed class CreateProductEvent {
-    data class ShowErrorSnackbar(val message: String?, val uri: Uri? = null) : CreateProductEvent()
+    data class ShowErrorSnackbar(val message: String?) : CreateProductEvent()
     data class BackWithResult(val product: Product?) : CreateProductEvent()
 }
 
@@ -32,9 +37,13 @@ class CreateProductViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     app: Application
 ): AndroidViewModel(app) {
-    private var currUri: Uri? = null
     private var currUrl: String? = null
+    private var currBitmap: Bitmap? = null
     private var uploadJob: Job? = null
+
+    private val _bitmap = MutableStateFlow<Bitmap?>(null)
+    val bitmap: StateFlow<Bitmap?>
+        get() = _bitmap
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean>
@@ -50,13 +59,17 @@ class CreateProductViewModel @Inject constructor(
 
     fun uploadImage(uri: Uri) {
         uploadJob?.cancel()
-        uploadJob = viewModelScope.launch(Dispatchers.IO) {
+        uploadJob = viewModelScope.launch {
+            setBitmap(uri)
             imageRepository.uploadImage(uri, getImageDisplayName(uri)).collect { result ->
                 when(result) {
                     is ApiResult.Loading -> _isUploadingImage.emit(result.state.value)
-                    is ApiResult.Failed -> _event.send(CreateProductEvent.ShowErrorSnackbar(result.message, currUri))
+                    is ApiResult.Failed -> {
+                        _bitmap.emit(currBitmap)
+                        _event.send(CreateProductEvent.ShowErrorSnackbar(result.message))
+                    }
                     is ApiResult.Success -> {
-                        currUri = uri
+                        currBitmap = _bitmap.value
                         currUrl = result.data?.url
                     }
                 }
@@ -88,19 +101,34 @@ class CreateProductViewModel @Inject constructor(
         }
     }
 
-    private fun getImageDisplayName(uri: Uri): String {
-        val column = arrayOf(DISPLAY_NAME)
-        getApplication<App>().contentResolver
-            .query(
-                uri,
-                column,
-                null,
-                null,
-                null)?.use { cursor ->
-                val idDisplayName = cursor.getColumnIndex(DISPLAY_NAME)
-                cursor.moveToFirst()
-                return cursor.getString(idDisplayName)
+    private suspend fun setBitmap(uri: Uri) {
+        withContext(Dispatchers.Default) {
+            if (Build.VERSION.SDK_INT < 28) {
+                 _bitmap.emit(MediaStore.Images
+                    .Media.getBitmap(getApplication<App>().contentResolver, uri))
+            } else {
+                val source = ImageDecoder
+                    .createSource(getApplication<App>().contentResolver, uri)
+                _bitmap.emit(ImageDecoder.decodeBitmap(source))
             }
-        return ""
+        }
+    }
+
+    private suspend fun getImageDisplayName(uri: Uri): String {
+        return withContext(Dispatchers.Default) {
+            val column = arrayOf(DISPLAY_NAME)
+            getApplication<App>().contentResolver
+                .query(
+                    uri,
+                    column,
+                    null,
+                    null,
+                    null)?.use { cursor ->
+                    val idDisplayName = cursor.getColumnIndex(DISPLAY_NAME)
+                    cursor.moveToFirst()
+                    return@withContext cursor.getString(idDisplayName)
+                }
+            return@withContext ""
+        }
     }
 }

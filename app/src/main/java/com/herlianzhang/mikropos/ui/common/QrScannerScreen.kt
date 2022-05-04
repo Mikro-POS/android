@@ -11,16 +11,17 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.*
+import com.herlianzhang.mikropos.R
 
 @Composable
 fun QrScannerScreen(navController: NavController) {
@@ -57,6 +61,12 @@ fun QrScannerScreen(navController: NavController) {
         onResult = { granted ->
             hasCamPermission = granted
         }
+    )
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.scan))
+    val progress by animateLottieCompositionAsState(
+        composition,
+        isPlaying = hasCamPermission,
+        iterations = LottieConstants.IterateForever
     )
     LaunchedEffect(key1 = true) {
         launcher.launch(Manifest.permission.CAMERA)
@@ -101,11 +111,10 @@ fun QrScannerScreen(navController: NavController) {
                         imageAnalysis.setAnalyzer(
                             ContextCompat.getMainExecutor(context),
                             QrCodeAnalyzer { barcodes ->
-                                barcodes.forEach { barcode ->
-                                    barcode.rawValue?.let { barcodeValue ->
-                                        navController.previousBackStackEntry?.savedStateHandle?.set("qr-result", barcodeValue)
-                                        navController.popBackStack()
-                                    }
+                                val barcode = barcodes.firstOrNull() ?: return@QrCodeAnalyzer
+                                barcode.rawValue?.let { barcodeValue ->
+                                    navController.previousBackStackEntry?.savedStateHandle?.set("qr-result", barcodeValue)
+                                    navController.popBackStack()
                                 }
                             }
                         )
@@ -122,6 +131,14 @@ fun QrScannerScreen(navController: NavController) {
                         previewView
                     },
                     modifier = Modifier.fillMaxSize()
+                )
+                LottieAnimation(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    composition = composition,
+                    progress = progress,
+                    contentScale = ContentScale.Crop
                 )
                 Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
                     val circlePath = Path().apply {
