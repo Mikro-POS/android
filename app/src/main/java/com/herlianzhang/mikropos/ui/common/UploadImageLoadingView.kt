@@ -20,7 +20,7 @@ import com.airbnb.lottie.compose.*
 import com.herlianzhang.mikropos.R
 
 @Composable
-fun UploadImageLoadingView(isShow: Boolean) {
+fun UploadImageLoadingView(isShow: Boolean, modifier: Modifier = Modifier) {
     val interactionSource = remember { MutableInteractionSource() }
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
     val progress by animateLottieCompositionAsState(
@@ -30,12 +30,12 @@ fun UploadImageLoadingView(isShow: Boolean) {
     )
     val scale = animateFloatAsState(if (isShow) 1f else 0f)
     val alpha = animateFloatAsState(if (isShow) 0.3f else 0f)
-    val modifier = Modifier
+    val mModifier = modifier
         .fillMaxSize()
         .background(Color.Black.copy(alpha.value))
 
     Box(
-        modifier = if (!isShow) modifier else modifier
+        modifier = if (!isShow) mModifier else mModifier
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,

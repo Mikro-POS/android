@@ -116,12 +116,12 @@ fun ProductListScreen(
     }
 
     navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
-        savedState.getLiveData<Product>("refresh_products").let {
+        savedState.getLiveData<Boolean>("refresh_products").let {
             val newData by it.observeAsState()
             LaunchedEffect(newData) {
                 newData ?: return@LaunchedEffect
                 viewModel.search(search, false)
-                savedState.remove<Product>("refresh_products")
+                savedState.remove<Boolean>("refresh_products")
             }
         }
     }

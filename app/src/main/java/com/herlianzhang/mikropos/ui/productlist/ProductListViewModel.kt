@@ -54,10 +54,10 @@ class ProductListViewModel @Inject constructor(
         searchJob = viewModelScope.launch {
             if (check) {
                 delay(1000)
-                if (value == search)
+                if (value == search.trim())
                     return@launch
             }
-            search = value
+            search = value.trim()
             page = 1
             isLastPage = false
             _products.emit(emptyList())
@@ -66,7 +66,7 @@ class ProductListViewModel @Inject constructor(
     }
 
     fun loadMore() {
-        if (isLastPage || searchJob?.isActive == true)
+        if (isLastPage || searchJob?.isActive == true || fetchJob?.isActive == true)
             return
         page += 1
         getProducts()

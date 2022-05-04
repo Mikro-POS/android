@@ -13,6 +13,7 @@ import com.herlianzhang.mikropos.App
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.ImageRepository
 import com.herlianzhang.mikropos.repository.ProductRepository
+import com.herlianzhang.mikropos.utils.getImageDisplayName
 import com.herlianzhang.mikropos.vo.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,7 @@ import javax.inject.Inject
 
 sealed class CreateProductEvent {
     data class ShowErrorSnackbar(val message: String?) : CreateProductEvent()
-    data class BackWithResult(val product: Product?) : CreateProductEvent()
+    object BackWithResult : CreateProductEvent()
 }
 
 @HiltViewModel
@@ -95,7 +96,7 @@ class CreateProductViewModel @Inject constructor(
                 when(result) {
                     is ApiResult.Loading -> _isLoading.emit(result.state.value)
                     is ApiResult.Failed -> _event.send(CreateProductEvent.ShowErrorSnackbar(result.message))
-                    is ApiResult.Success -> _event.send(CreateProductEvent.BackWithResult(result.data))
+                    is ApiResult.Success -> _event.send(CreateProductEvent.BackWithResult)
                 }
             }
         }
@@ -111,24 +112,6 @@ class CreateProductViewModel @Inject constructor(
                     .createSource(getApplication<App>().contentResolver, uri)
                 _bitmap.emit(ImageDecoder.decodeBitmap(source))
             }
-        }
-    }
-
-    private suspend fun getImageDisplayName(uri: Uri): String {
-        return withContext(Dispatchers.Default) {
-            val column = arrayOf(DISPLAY_NAME)
-            getApplication<App>().contentResolver
-                .query(
-                    uri,
-                    column,
-                    null,
-                    null,
-                    null)?.use { cursor ->
-                    val idDisplayName = cursor.getColumnIndex(DISPLAY_NAME)
-                    cursor.moveToFirst()
-                    return@withContext cursor.getString(idDisplayName)
-                }
-            return@withContext ""
         }
     }
 }

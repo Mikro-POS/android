@@ -57,15 +57,13 @@ fun EditDialog(
             onDismiss()
         }) {
             Card(
-                shape = RoundedCornerShape(24.dp),
-                modifier = Modifier.padding(32.dp)
+                shape = RoundedCornerShape(16.dp),
             ) {
                 Box {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
                         Text(
                             title,
@@ -112,7 +110,7 @@ fun EditDialog(
                         }
                         Row(
                             modifier = Modifier
-                                .background(MaterialTheme.colors.primary.copy(alpha = 0.5f))
+                                .background(MaterialTheme.colors.primarySurface)
                                 .height(56.dp)
                         ) {
                             TextButton(
@@ -123,7 +121,7 @@ fun EditDialog(
                             ) {
                                 Text(
                                     "Batal",
-                                    color = Color.Gray
+                                    color = Color.White
                                 )
                             }
                             TextButton(
@@ -135,7 +133,7 @@ fun EditDialog(
                             ) {
                                 Text(
                                     "Ubah",
-                                    color = MaterialTheme.colors.primary,
+                                    color = Color.White,
                                     fontWeight = FontWeight.ExtraBold
                                 )
                             }

@@ -35,4 +35,10 @@ class ProductRepository @Inject constructor(
     ) = apiCaller {
         apiService.updateProduct(id, params)
     }
+
+    fun deleteProduct(
+        id: Int
+    ) = apiCaller {
+        apiService.deleteProduct(id)
+    }
 }

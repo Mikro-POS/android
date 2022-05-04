@@ -28,8 +28,7 @@ fun NavigationComponent(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "product_list"
-//        startDestination = if (isAuthenticated) "home" else "login"
+        startDestination = if (isAuthenticated) "home" else "login"
     ) {
         composable("login") {
             val viewModel = hiltViewModel<LoginViewModel>()

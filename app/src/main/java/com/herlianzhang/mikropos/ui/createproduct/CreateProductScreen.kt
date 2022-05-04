@@ -87,7 +87,7 @@ fun CreateProductScreen(
                 is CreateProductEvent.BackWithResult -> {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         "refresh_products",
-                        event.product
+                        true
                     )
                     navController.popBackStack()
                 }

@@ -1,5 +1,8 @@
 package com.herlianzhang.mikropos.ui.productdetail
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -76,6 +79,12 @@ fun ProductDetailScreen(
         mutableStateOf(EditDialogType.Default)
     }
     val isDialogLoading by viewModel.isDialogLoading.collectAsState()
+    val isUploadingImage by viewModel.isUploadingImage.collectAsState()
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri ?: return@rememberLauncherForActivityResult
+            viewModel.uploadImage(uri)
+        }
 
     navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
         savedState.getLiveData<String>("qr-result").let {
@@ -102,6 +111,15 @@ fun ProductDetailScreen(
                 is ProductDetailEvent.HideDialog -> {
                     isShowDialog = false
                 }
+                is ProductDetailEvent.SetHasChanges -> {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "refresh_products",
+                        true
+                    )
+                }
+                is ProductDetailEvent.Back -> {
+                    navController.popBackStack()
+                }
             }
         }
     }
@@ -122,9 +140,8 @@ fun ProductDetailScreen(
                     textAlign = TextAlign.Center
                 )
                 IconButton(
-                    onClick = {
-                    },
-                    enabled = data != null
+                    onClick = { viewModel.deleteProduct() },
+                    enabled = !isLoading && data != null
                 ) {
                     Icon(Icons.Rounded.Delete, contentDescription = null)
                 }
@@ -155,11 +172,14 @@ fun ProductDetailScreen(
                             contentDescription = null
                         )
                         IconButton(
+                            enabled = !isUploadingImage ,
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colors.onBackground.copy(alpha = 0.7f)),
-                            onClick = { /*TODO*/ }
+                            onClick = {
+                                launcher.launch("image/*")
+                            }
                         ) {
                             Icon(
                                 Icons.Rounded.Edit,
@@ -167,6 +187,10 @@ fun ProductDetailScreen(
                                 contentDescription = null
                             )
                         }
+                        UploadImageLoadingView(
+                            isUploadingImage,
+                            modifier = Modifier.clip(CircleShape)
+                        )
                     }
 
                     DetailItem(key = "Nama", value = data.name) {

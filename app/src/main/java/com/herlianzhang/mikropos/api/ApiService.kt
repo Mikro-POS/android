@@ -49,6 +49,11 @@ interface ApiService {
         @Body params: Map<String, Any>
     ): Response<ProductDetail>
 
+    @DELETE("products/{product_id}")
+    suspend fun deleteProduct(
+        @Path("product_id") productId: Int
+    ): Response<Any?>
+
     // default
     @POST("/upload-image")
     suspend fun uploadImage(
