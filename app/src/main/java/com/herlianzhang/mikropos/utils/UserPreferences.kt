@@ -18,6 +18,14 @@ class UserPreferences @Inject constructor(@ApplicationContext context: Context) 
             }
         }
 
+    var printerAddress: String?
+        get() = sharedPreferences.getString(PRINTER_ADDRESS, null)
+        set(value) {
+            sharedPreferences.edit {
+                putString(PRINTER_ADDRESS, value)
+            }
+        }
+
     var isAuthenticated: Boolean = !accessToken.isNullOrBlank()
 
     fun clearUser() {
@@ -29,5 +37,6 @@ class UserPreferences @Inject constructor(@ApplicationContext context: Context) 
     companion object {
         const val NAME = "user"
         const val ACCESS_TOKEN = "access_token"
+        const val PRINTER_ADDRESS = "printer_address"
     }
 }

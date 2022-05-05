@@ -38,12 +38,13 @@ fun EditDialog(
     value: String,
     title: String,
     type: EditDialogType,
+    keyboardType: KeyboardType? = null,
     isLoading: Boolean,
     changeValue: (String) -> Unit,
     isDismiss: Boolean,
     onDismiss: () -> Unit,
     onSubmit: () -> Unit,
-    navigateToScanner: () -> Unit
+    navigateToScanner: (() -> Unit)? = null
 ) {
     val localFocusManager = LocalFocusManager.current
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
@@ -84,7 +85,8 @@ fun EditDialog(
                                 shape = RoundedCornerShape(12.dp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
-                                    keyboardType = if (type == EditDialogType.Default) KeyboardType.Text else KeyboardType.NumberPassword,
+                                    keyboardType = keyboardType
+                                        ?: if (type == EditDialogType.Default) KeyboardType.Text else KeyboardType.NumberPassword,
                                     capitalization = KeyboardCapitalization.Words,
                                     imeAction = ImeAction.Done
                                 ),
@@ -102,7 +104,7 @@ fun EditDialog(
                             if (type == EditDialogType.QrCode) {
                                 IconButton(
                                     enabled = !isLoading,
-                                    onClick = { navigateToScanner() }
+                                    onClick = { navigateToScanner?.invoke() }
                                 ) {
                                     Icon(Icons.Rounded.QrCodeScanner, contentDescription = null)
                                 }

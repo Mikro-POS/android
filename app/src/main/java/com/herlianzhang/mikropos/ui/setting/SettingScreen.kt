@@ -1,7 +1,6 @@
 package com.herlianzhang.mikropos.ui.setting
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,14 +51,20 @@ fun SettingScreen(navController: NavController) {
         SettingItem(label = "Ubah Profil", icon = Icons.Rounded.AccountCircle) {}
         SettingItem(label = "Ganti Password", icon = Icons.Rounded.Password) {}
         SettingItem(label = "Laporan", icon = Icons.Rounded.Equalizer) {}
-        SettingItem(label = "Printer", icon = Icons.Rounded.Print) {}
+        SettingItem(label = "Printer", icon = Icons.Rounded.Print) {
+            navController.navigate("printer_list")
+        }
 
         Spacer(Modifier.height(0.dp))
         Text("Inventaris")
         SettingItem(label = "Kelola Produk", icon = Icons.Rounded.Inventory2) {
             navController.navigate("product_list")
         }
-        SettingItem(label = "Kelola Pelanggan", icon = Icons.Rounded.SupervisedUserCircle) {}
-        SettingItem(label = "Kelola Pemasok", icon = Icons.Rounded.LocalShipping) {}
+        SettingItem(label = "Kelola Pelanggan", icon = Icons.Rounded.SupervisedUserCircle) {
+            navController.navigate("customer_list")
+        }
+        SettingItem(label = "Kelola Pemasok", icon = Icons.Rounded.LocalShipping) {
+            navController.navigate("supplier_list")
+        }
     }
 }

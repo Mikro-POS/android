@@ -1,4 +1,4 @@
-package com.herlianzhang.mikropos.ui.common
+package com.herlianzhang.mikropos.ui.qrscan
 
 import android.annotation.SuppressLint
 import androidx.camera.core.ImageAnalysis

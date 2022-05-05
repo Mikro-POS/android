@@ -93,4 +93,6 @@ dependencies {
     implementation "androidx.camera:camera-view:1.1.0-beta03"
 
     implementation 'com.google.mlkit:barcode-scanning:17.0.2'
+    implementation "com.google.accompanist:accompanist-permissions:0.23.1"
+    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.2.0'
 }

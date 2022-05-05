@@ -1,4 +1,4 @@
-package com.herlianzhang.mikropos.ui.productlist
+package com.herlianzhang.mikropos.ui.customerlist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -12,7 +12,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -26,44 +25,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.herlianzhang.mikropos.ui.common.*
-import com.herlianzhang.mikropos.utils.toRupiah
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProductListScreen(
+fun CustomerListScreen(
     navController: NavController,
-    viewModel: ProductListViewModel
+    viewModel: CustomerListViewModel
 ) {
     var search by rememberSaveable {
         mutableStateOf("")
     }
     val listState = rememberLazyListState()
-    val products by viewModel.products.collectAsState()
-    val isProductEmpty by viewModel.isProductEmpty.collectAsState()
+    val customers by viewModel.customers.collectAsState()
+    val isCustomerEmpty by viewModel.isCustomerEmpty.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val isLoadMore by viewModel.isLoadMore.collectAsState()
     val isError by viewModel.isError.collectAsState()
     val localFocusManager = LocalFocusManager.current
 
     navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
-        savedState.getLiveData<String>("qr-result").let {
-            val newData by it.observeAsState()
-            LaunchedEffect(newData) {
-                val data = newData ?: return@LaunchedEffect
-                search = data
-                viewModel.search(data, false)
-                savedState.remove<String>("qr-result")
-            }
-        }
-    }
-
-    navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
-        savedState.getLiveData<Boolean>("refresh_products").let {
+        savedState.getLiveData<Boolean>("refresh_customers").let {
             val newData by it.observeAsState()
             LaunchedEffect(newData) {
                 newData ?: return@LaunchedEffect
                 viewModel.search(search, false)
-                savedState.remove<Boolean>("refresh_products")
+                savedState.remove<Boolean>("refresh_customers")
             }
         }
     }
@@ -75,12 +61,12 @@ fun ProductListScreen(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = null)
                 }
                 Text(
-                    "Daftar Produk",
+                    "Daftar Pelanggan",
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
                 IconButton(onClick = {
-                    navController.navigate("create_product")
+                    navController.navigate("create_customer")
                 }) {
                     Icon(Icons.Rounded.Add, contentDescription = null)
                 }
@@ -89,46 +75,37 @@ fun ProductListScreen(
     ) {
         Box(contentAlignment = Alignment.Center) {
             Column {
-                Row(
+                TextField(
                     modifier = Modifier
-                        .padding(vertical = 20.dp, horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    TextField(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 12.dp),
-                        value = search,
-                        label = {
-                            Text("Cari")
-                        },
-                        onValueChange = {
-                            search = it
-                            viewModel.search(it)
-                        },
-                        leadingIcon = {
-                            Icon(Icons.Rounded.Search, contentDescription = null)
-                        },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = TextFieldDefaults.textFieldColors(
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                localFocusManager.clearFocus()
-                            }
-                        ),
-                        singleLine = true
-                    )
-                    IconButton(onClick = { navController.navigate("qr_scanner") }) {
-                        Icon(Icons.Rounded.QrCodeScanner, contentDescription = null)
-                    }
-                }
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 20.dp),
+                    value = search,
+                    label = {
+                        Text("Cari")
+                    },
+                    onValueChange = {
+                        search = it
+                        viewModel.search(it)
+                    },
+                    leadingIcon = {
+                        Icon(Icons.Rounded.Search, contentDescription = null)
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            localFocusManager.clearFocus()
+                        }
+                    ),
+                    singleLine = true
+                )
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
@@ -138,14 +115,14 @@ fun ProductListScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    items(products) { item ->
+                    items(customers) { item ->
                         ListItem(
                             item.photo,
                             item.name,
-                            item.price?.toRupiah(),
+                            item.phoneNumber,
                             Modifier.animateItemPlacement(),
                             onClicked = {
-                                navController.navigate("product_detail/${item.id}")
+                                navController.navigate("customer_detail/${item.id}")
                             }
                         )
                     }
@@ -162,7 +139,7 @@ fun ProductListScreen(
                     }
                 }
             }
-            EmptyView(isProductEmpty)
+            EmptyView(isCustomerEmpty)
             LoadingView(isLoading)
             ErrorView(isError, onClick = { viewModel.tryAgain() })
         }

@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Product(
     val id: Int,
-    val name: String,
-    val price: Int,
+    val name: String?,
+    val price: Int?,
     val photo: String?
 ) : Parcelable

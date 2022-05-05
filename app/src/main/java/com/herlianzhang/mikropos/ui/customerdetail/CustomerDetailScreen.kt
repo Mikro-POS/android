@@ -1,4 +1,4 @@
-package com.herlianzhang.mikropos.ui.productdetail
+package com.herlianzhang.mikropos.ui.customerdetail
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,26 +14,25 @@ import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.herlianzhang.mikropos.ui.common.*
-import com.herlianzhang.mikropos.utils.toRupiah
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun ProductDetailScreen(
+fun CustomerDetailScreen(
     id: Int,
     navController: NavController,
-    viewModel: ProductDetailViewModel
+    viewModel: CustomerDetailViewModel
 ) {
     val scaffoldState = rememberScaffoldState()
     val data by viewModel.data.collectAsState()
@@ -63,38 +62,28 @@ fun ProductDetailScreen(
             viewModel.uploadImage(uri)
         }
 
-    navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
-        savedState.getLiveData<String>("qr-result").let {
-            val newData by it.observeAsState()
-            LaunchedEffect(newData) {
-                dialogValue = newData ?: return@LaunchedEffect
-                savedState.remove<String>("qr-result")
-            }
-        }
-    }
-
     LaunchedEffect(key1 = true) {
         if (data == null)
-            viewModel.setProductId(id)
+            viewModel.setCustomerId(id)
     }
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
-                is ProductDetailEvent.ShowErrorSnackbar -> {
+                is CustomerDetailEvent.ShowErrorSnackbar -> {
                     val message = event.message ?: return@collectLatest
                     scaffoldState.snackbarHostState.showSnackbar(message)
                 }
-                is ProductDetailEvent.HideDialog -> {
+                is CustomerDetailEvent.HideDialog -> {
                     isShowDialog = false
                 }
-                is ProductDetailEvent.SetHasChanges -> {
+                is CustomerDetailEvent.SetHasChanges -> {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
-                        "refresh_products",
+                        "refresh_customers",
                         true
                     )
                 }
-                is ProductDetailEvent.Back -> {
+                is CustomerDetailEvent.Back -> {
                     navController.popBackStack()
                 }
             }
@@ -112,12 +101,12 @@ fun ProductDetailScreen(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = null)
                 }
                 Text(
-                    "Detail Produk",
+                    "Detail Pelanggan",
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
                 IconButton(
-                    onClick = { viewModel.deleteProduct() },
+                    onClick = { viewModel.deleteCustomer() },
                     enabled = !isLoading && data != null
                 ) {
                     Icon(Icons.Rounded.Delete, contentDescription = null)
@@ -177,22 +166,19 @@ fun ProductDetailScreen(
                         dialogType = EditDialogType.Default
                         isShowDialog = true
                     }
-                    DetailItem(key = "Harga", value = data.price?.toRupiah()) {
-                        dialogKey = "price"
-                        dialogValue = data.price?.toString() ?: ""
-                        dialogTitle = "Ubah Harga"
-                        dialogType = EditDialogType.Currency
+                    DetailItem(key = "Nomor Telepon", value = data.phoneNumber) {
+                        dialogKey = "phone_number"
+                        dialogValue = data.phoneNumber ?: ""
+                        dialogTitle = "Ubah Nomor Telepon"
+                        dialogType = EditDialogType.Default
                         isShowDialog = true
                     }
-                    DetailItem(key = "SKU", value = data.sku) {
-                        dialogKey = "sku"
-                        dialogValue = data.sku ?: ""
-                        dialogTitle = "Ubah SKU"
-                        dialogType = EditDialogType.QrCode
+                    DetailItem(key = "Alamat", value = data.address) {
+                        dialogKey = "address"
+                        dialogValue = data.address ?: ""
+                        dialogTitle = "Ubah Alamat"
+                        dialogType = EditDialogType.Default
                         isShowDialog = true
-                    }
-                    DetailItem(key = "Total Stok", value = data.totalStock?.toString()) {
-
                     }
                 }
             }
@@ -204,22 +190,17 @@ fun ProductDetailScreen(
                 changeValue = { dialogValue = it },
                 isLoading = isDialogLoading,
                 type = dialogType,
+                keyboardType = if (dialogKey == "phone_number") KeyboardType.Phone else null,
                 isDismiss = isShowDialog,
                 onDismiss = {
-                    viewModel.cancelUpdateProduct()
+                    viewModel.cancelUpdateCustomer()
                     isShowDialog = false
                 },
                 onSubmit = {
                     val params = mutableMapOf<String, Any>()
-                    if (dialogType == EditDialogType.Currency) {
-                        val value = dialogValue.toLongOrNull() ?: return@EditDialog
-                        params[dialogKey] = value
-                    } else {
-                        params[dialogKey] = dialogValue
-                    }
-                    viewModel.updateProduct(params)
-                },
-                navigateToScanner = { navController.navigate("qr_scanner") }
+                    params[dialogKey] = dialogValue
+                    viewModel.updateCustomer(params)
+                }
             )
             DefaultSnackbar(
                 snackbarHostState = scaffoldState.snackbarHostState,
