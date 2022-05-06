@@ -20,10 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.herlianzhang.mikropos.ui.createtransaction.CreateTransactionScreen
-import com.herlianzhang.mikropos.ui.productlist.ProductListScreen
+import com.herlianzhang.mikropos.ui.transaction.createtransaction.CreateTransactionScreen
 import com.herlianzhang.mikropos.ui.setting.SettingScreen
-import com.herlianzhang.mikropos.ui.transactionlist.TransactionListScreen
+import com.herlianzhang.mikropos.ui.transaction.transactionlist.TransactionListScreen
 import kotlinx.coroutines.flow.collectLatest
 
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {

@@ -7,33 +7,35 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.herlianzhang.mikropos.ui.createcustomer.CreateCustomerScreen
-import com.herlianzhang.mikropos.ui.createcustomer.CreateCustomerViewModel
+import com.herlianzhang.mikropos.ui.customer.createcustomer.CreateCustomerScreen
+import com.herlianzhang.mikropos.ui.customer.createcustomer.CreateCustomerViewModel
 import com.herlianzhang.mikropos.ui.qrscan.QrScannerScreen
-import com.herlianzhang.mikropos.ui.createproduct.CreateProductScreen
-import com.herlianzhang.mikropos.ui.createproduct.CreateProductViewModel
-import com.herlianzhang.mikropos.ui.createsupplier.CreateSupplierScreen
-import com.herlianzhang.mikropos.ui.createsupplier.CreateSupplierViewModel
-import com.herlianzhang.mikropos.ui.customerdetail.CustomerDetailScreen
-import com.herlianzhang.mikropos.ui.customerdetail.CustomerDetailViewModel
-import com.herlianzhang.mikropos.ui.customerlist.CustomerListScreen
-import com.herlianzhang.mikropos.ui.customerlist.CustomerListViewModel
+import com.herlianzhang.mikropos.ui.product.createproduct.CreateProductScreen
+import com.herlianzhang.mikropos.ui.product.createproduct.CreateProductViewModel
+import com.herlianzhang.mikropos.ui.supplier.createsupplier.CreateSupplierScreen
+import com.herlianzhang.mikropos.ui.supplier.createsupplier.CreateSupplierViewModel
+import com.herlianzhang.mikropos.ui.customer.customerdetail.CustomerDetailScreen
+import com.herlianzhang.mikropos.ui.customer.customerdetail.CustomerDetailViewModel
+import com.herlianzhang.mikropos.ui.customer.customerlist.CustomerListScreen
+import com.herlianzhang.mikropos.ui.customer.customerlist.CustomerListViewModel
 import com.herlianzhang.mikropos.ui.home.HomeScreen
 import com.herlianzhang.mikropos.ui.home.HomeViewModel
 import com.herlianzhang.mikropos.ui.login.LoginScreen
 import com.herlianzhang.mikropos.ui.login.LoginViewModel
 import com.herlianzhang.mikropos.ui.printer.PrinterListScreen
 import com.herlianzhang.mikropos.ui.printer.PrinterListViewModel
-import com.herlianzhang.mikropos.ui.productdetail.ProductDetailScreen
-import com.herlianzhang.mikropos.ui.productdetail.ProductDetailViewModel
-import com.herlianzhang.mikropos.ui.productlist.ProductListScreen
-import com.herlianzhang.mikropos.ui.productlist.ProductListViewModel
+import com.herlianzhang.mikropos.ui.product.productdetail.ProductDetailScreen
+import com.herlianzhang.mikropos.ui.product.productdetail.ProductDetailViewModel
+import com.herlianzhang.mikropos.ui.product.productlist.ProductListScreen
+import com.herlianzhang.mikropos.ui.product.productlist.ProductListViewModel
 import com.herlianzhang.mikropos.ui.register.RegisterScreen
 import com.herlianzhang.mikropos.ui.register.RegisterViewModel
-import com.herlianzhang.mikropos.ui.supplierdetail.SupplierDetailScreen
-import com.herlianzhang.mikropos.ui.supplierdetail.SupplierDetailViewModel
-import com.herlianzhang.mikropos.ui.supplierlist.SupplierListScreen
-import com.herlianzhang.mikropos.ui.supplierlist.SupplierListViewModel
+import com.herlianzhang.mikropos.ui.stock.stocklist.StockListScreen
+import com.herlianzhang.mikropos.ui.stock.stocklist.StockListViewModel
+import com.herlianzhang.mikropos.ui.supplier.supplierdetail.SupplierDetailScreen
+import com.herlianzhang.mikropos.ui.supplier.supplierdetail.SupplierDetailViewModel
+import com.herlianzhang.mikropos.ui.supplier.supplierlist.SupplierListScreen
+import com.herlianzhang.mikropos.ui.supplier.supplierlist.SupplierListViewModel
 
 @Composable
 fun NavigationComponent(
@@ -147,6 +149,15 @@ fun NavigationComponent(
             backStackEntry.arguments?.getInt("customerId")?.let { id ->
                 val viewModel = hiltViewModel<CustomerDetailViewModel>()
                 CustomerDetailScreen(id, navController, viewModel)
+            }
+        }
+        composable(
+            "stock_list/{productId}",
+            arguments = listOf(navArgument("productId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getInt("productId")?.let { productId ->
+                val viewModel = hiltViewModel<StockListViewModel>()
+                StockListScreen(productId, navController, viewModel)
             }
         }
         composable("qr_scanner") {

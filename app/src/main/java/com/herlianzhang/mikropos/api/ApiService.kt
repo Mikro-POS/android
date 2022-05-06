@@ -21,7 +21,7 @@ interface ApiService {
     ): Response<User>
 
     // supplier
-    @GET("suppliers")
+    @GET("suppliers/")
     suspend fun getSuppliers(
         @Query("limit") limit: Int = 10,
         @Query("page") page: Int = 1,
@@ -52,7 +52,7 @@ interface ApiService {
     ): Response<Any?>
 
     // customer
-    @GET("customers")
+    @GET("customers/")
     suspend fun getCustomers(
         @Query("limit") limit: Int = 10,
         @Query("page") page: Int = 1,
@@ -83,7 +83,7 @@ interface ApiService {
     ): Response<Any?>
 
     // product
-    @GET("products")
+    @GET("products/")
     suspend fun getProducts(
         @Query("limit") limit: Int = 10,
         @Query("page") page: Int = 1,
@@ -111,6 +111,27 @@ interface ApiService {
     @DELETE("products/{product_id}")
     suspend fun deleteProduct(
         @Path("product_id") productId: Int
+    ): Response<Any?>
+
+    // stock
+    @GET("stocks/{product_id}")
+    suspend fun getStocks(
+        @Path("product_id") productId: Int,
+        @Query("limit") limit: Int = 10,
+        @Query("page") page: Int = 1,
+        @Query("search") search: String = ""
+    ): Response<List<Stock>>
+
+    @POST("stocks/{product_id}")
+    suspend fun createStock(
+        @Path("product_id") productId: Int,
+        @Body params: Map<String, Any>
+    ): Response<Stock>
+
+    @DELETE("stocks/{product_id}/{stock_id}")
+    suspend fun deleteStock(
+        @Path("product_id") productId: Int,
+        @Path("stock_id") stockId: Int
     ): Response<Any?>
 
     // default

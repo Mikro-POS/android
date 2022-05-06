@@ -17,6 +17,7 @@ class ProductRepository @Inject constructor(
     ) = apiCaller {
         apiService.getProducts(page = page, limit = limit, search = search)
     }
+
     fun getProduct(
         id: Int
     ) = apiCaller {
