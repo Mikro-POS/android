@@ -7,16 +7,20 @@ plugins {
 }
 
 android {
+    compileSdk 32
     signingConfigs {
-        mikropos {
-            storeFile file('/Users/herlian/Developer/skripsi/MikroPOS/tmpkey')
-            storePassword 'test123'
-            keyAlias 'test123'
-            keyPassword 'test123'
+        release {
+            def propsFile = rootProject.file('key.properties')
+            if (propsFile.exists()) {
+                def props = new Properties()
+                props.load(new FileInputStream(propsFile))
+                storeFile = file(props['storeFile'])
+                storePassword = props['storePassword']
+                keyAlias = props['keyAlias']
+                keyPassword = props['keyPassword']
+            }
         }
     }
-    compileSdk 32
-
     defaultConfig {
         applicationId "com.herlianzhang.mikropos"
         minSdk 23
@@ -29,14 +33,13 @@ android {
             useSupportLibrary true
         }
 
-//        buildConfigField "String", "BASE_URL", '"https://mikropos.herokuapp.com/"'
-        buildConfigField "String", "BASE_URL", '"http://192.168.100.21:8000/"'
+        buildConfigField "String", "BASE_URL", '"https://mikropos.herokuapp.com/"'
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.mikropos
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

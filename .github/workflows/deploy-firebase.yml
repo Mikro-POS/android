@@ -1,0 +1,39 @@
+name: Mikro POS deploy to Firebase Distribution
+on:
+  push:
+    branches:
+      - 'release/**'
+jobs:
+  build:
+    name: build and deploy to firebase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+      - name: Install bundle
+        run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+      - name: Decrypt Android keys
+        run: sh ./.github/scripts/decrypt_secret.sh
+        env:
+          ANDROID_KEYS_ZIP_PASSPHRASE: ${{ secrets.ANDROID_KEYS_ZIP_PASSPHRASE }}
+      - name: Clean Build
+        run: ./gradlew clean
+      - name: Build apk release
+        run: ./gradlew assembleRelease
+      - name: run fastlane
+        run: bundle exec fastlane deploy
+        env:
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_CLI_TOKEN: ${{ secrets.FIREBASE_CLI_TOKEN }}
