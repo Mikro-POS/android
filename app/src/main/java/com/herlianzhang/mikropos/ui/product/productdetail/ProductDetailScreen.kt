@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.herlianzhang.mikropos.ui.common.*
-import com.herlianzhang.mikropos.utils.toRupiah
+import com.herlianzhang.mikropos.utils.extensions.toRupiah
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.ImageRepository
 import com.herlianzhang.mikropos.repository.ProductRepository
-import com.herlianzhang.mikropos.utils.getImageDisplayName
+import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
 import com.herlianzhang.mikropos.vo.ProductDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

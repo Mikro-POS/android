@@ -1,4 +1,4 @@
-package com.herlianzhang.mikropos.utils
+package com.herlianzhang.mikropos.utils.extensions
 
 import android.net.Uri
 import android.provider.MediaStore

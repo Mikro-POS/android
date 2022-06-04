@@ -2,11 +2,17 @@ package com.herlianzhang.mikropos.ui.stock.stocklist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dantsu.escposprinter.EscPosPrinter
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
 import com.herlianzhang.mikropos.repository.StockRepository
+import com.herlianzhang.mikropos.utils.UserPreferences
+import com.herlianzhang.mikropos.utils.extensions.formatDate
+import com.herlianzhang.mikropos.utils.extensions.getPrinter
+import com.herlianzhang.mikropos.utils.extensions.printFormattedText
 import com.herlianzhang.mikropos.vo.Stock
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StockListViewModel @Inject constructor(
-    private val stockRepository: StockRepository
-): ViewModel() {
+    private val stockRepository: StockRepository,
+    private val userPref: UserPreferences
+) : ViewModel() {
     private var productId: Int = 0
     private val limit: Int = 20
     private var page: Int = 1
@@ -62,6 +69,31 @@ class StockListViewModel @Inject constructor(
         }
     }
 
+    fun printStock(item: Stock) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _isLoading.emit(true)
+            try {
+                val printer = userPref.getPrinter()
+                printer.printFormattedText(
+                    """
+                        
+                        [C]<qrcode size='30'>https://mikropos.herokuapp.com/stocks/${item.productId}/${item.id}</qrcode>
+                        
+                        
+                        [C]<b>#ID: ${item.id}</b>
+                        [C]<b>Total: ${item.amount}</b>
+                        
+                        [C]<b>${item.createdAt.formatDate()}</b>
+                    """.trimIndent()
+                )
+            } catch (_: Exception) {
+                // show error
+            } finally {
+                _isLoading.emit(false)
+            }
+        }
+    }
+
     suspend fun refresh() {
         page = 1
         isLastPage = false
@@ -73,7 +105,7 @@ class StockListViewModel @Inject constructor(
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             stockRepository.getStocks(productId, page, limit).collect { result ->
-                when(result) {
+                when (result) {
                     is ApiResult.Success -> handleSuccess(result.data ?: emptyList())
                     is ApiResult.Failed -> handleError()
                     is ApiResult.Loading -> handleLoading(result.state)

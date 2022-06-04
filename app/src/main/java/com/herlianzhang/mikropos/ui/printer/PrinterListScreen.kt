@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,10 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.herlianzhang.mikropos.ui.common.LoadingView
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PrinterListScreen(viewModel: PrinterListViewModel) {
     val printers by viewModel.printers.collectAsState()
@@ -88,8 +85,7 @@ fun PrinterListScreen(viewModel: PrinterListViewModel) {
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(color = if (item.isConnected) MaterialTheme.colors.primarySurface else Color.Transparent)
-                                .border(1.dp, MaterialTheme.colors.onBackground, RoundedCornerShape(12.dp))
+                                .border(1.dp, if (item.isConnected) MaterialTheme.colors.primarySurface else Color.Gray, RoundedCornerShape(12.dp))
                                 .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {

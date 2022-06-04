@@ -72,7 +72,7 @@ fun LoginScreen(
                         .fillMaxWidth()
                         .weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
+                    verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically)
                 ) {
                     Text(
                         "Masuk",
@@ -81,6 +81,8 @@ fun LoginScreen(
                             .h4
                             .copy(fontWeight = FontWeight.Bold)
                     )
+
+                    Spacer(modifier = Modifier.height(28.dp))
 
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
@@ -121,27 +123,30 @@ fun LoginScreen(
                             onDone = {
                                 localFocusManager.clearFocus()
                                 if (username.isNotBlank() and password.isNotBlank())
-                                    viewModel.login(username,  password)
+                                    viewModel.login(username, password)
                             }
                         ),
                         onValueChange = { password = it.replace(" ", "") }
                     )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Belum punya akun?")
+                        TextButton(onClick = navigateToRegister) {
+                            Text("Daftar")
+                        }
+                    }
                 }
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = username.isNotBlank() and password.isNotBlank(),
                     onClick = {
-                        viewModel.login(username,  password)
+                        viewModel.login(username, password)
                     }
                 ) {
                     Text("Masuk")
                 }
-            }
-            TextButton(
-                modifier = Modifier.padding(20.dp),
-                onClick = navigateToRegister
-            ) {
-                Text("Daftar")
             }
             LoadingView(isLoading)
             DefaultSnackbar(

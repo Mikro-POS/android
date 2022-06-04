@@ -1,8 +1,5 @@
 package com.herlianzhang.mikropos.vo
 
-import java.text.SimpleDateFormat
-import java.util.*
-
 enum class StockSource {
     SUPPLIER,
     CUSTOMER
@@ -10,10 +7,21 @@ enum class StockSource {
 
 data class Stock(
     val id: Int,
+    val productId: Int,
+    val supplierName: String?,
     val amount: Int?,
     val soldAmount: Int?,
     val purchasePrice: Int?,
     val source: StockSource?,
     val supplier: Supplier?,
-    val createdAt: String?,
-)
+    val createdAt: Long?,
+) {
+    val sourceString: String
+        get() {
+            return when (source) {
+                StockSource.SUPPLIER -> "Pemasok"
+                StockSource.CUSTOMER -> "Pengembalian Dana"
+                else -> "Tidak Diketahui"
+            }
+        }
+}

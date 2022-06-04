@@ -12,7 +12,7 @@ import com.herlianzhang.mikropos.App
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.CustomerRepository
 import com.herlianzhang.mikropos.repository.ImageRepository
-import com.herlianzhang.mikropos.utils.getImageDisplayName
+import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

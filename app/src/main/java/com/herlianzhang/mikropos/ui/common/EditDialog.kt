@@ -25,7 +25,7 @@ import androidx.compose.ui.window.Dialog
 import com.airbnb.lottie.compose.*
 import com.herlianzhang.mikropos.R
 import com.herlianzhang.mikropos.utils.CurrencyVisualTransformation
-import com.herlianzhang.mikropos.utils.inputCurrency
+import com.herlianzhang.mikropos.utils.extensions.inputCurrency
 
 enum class EditDialogType {
     Default,

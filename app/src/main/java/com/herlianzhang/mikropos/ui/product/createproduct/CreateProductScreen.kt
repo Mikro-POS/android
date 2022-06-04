@@ -38,7 +38,7 @@ import com.herlianzhang.mikropos.ui.common.DefaultSnackbar
 import com.herlianzhang.mikropos.ui.common.LoadingView
 import com.herlianzhang.mikropos.ui.common.UploadImageLoadingView
 import com.herlianzhang.mikropos.utils.CurrencyVisualTransformation
-import com.herlianzhang.mikropos.utils.inputCurrency
+import com.herlianzhang.mikropos.utils.extensions.inputCurrency
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

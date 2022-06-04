@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun SettingItem(label: String, icon: ImageVector, onClick: () -> Unit) {
+fun MenuItem(label: String, icon: ImageVector, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,7 +37,7 @@ fun SettingItem(label: String, icon: ImageVector, onClick: () -> Unit) {
 }
 
 @Composable
-fun SettingScreen(navController: NavController) {
+fun MenuScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,23 +48,20 @@ fun SettingScreen(navController: NavController) {
     ) {
         Spacer(Modifier.height(8.dp))
         Text("Akun")
-        SettingItem(label = "Ubah Profil", icon = Icons.Rounded.AccountCircle) {}
-        SettingItem(label = "Ganti Password", icon = Icons.Rounded.Password) {}
-        SettingItem(label = "Laporan", icon = Icons.Rounded.Equalizer) {}
-        SettingItem(label = "Printer", icon = Icons.Rounded.Print) {
+        MenuItem(label = "Ubah Profil", icon = Icons.Rounded.AccountCircle) {}
+        MenuItem(label = "Ganti Password", icon = Icons.Rounded.Password) {}
+        MenuItem(label = "Printer", icon = Icons.Rounded.Print) {
             navController.navigate("printer_list")
         }
 
         Spacer(Modifier.height(0.dp))
         Text("Inventaris")
-        SettingItem(label = "Kelola Produk", icon = Icons.Rounded.Inventory2) {
+        MenuItem(label = "Kelola Produk", icon = Icons.Rounded.Inventory2) {
             navController.navigate("product_list")
         }
-        SettingItem(label = "Kelola Pelanggan", icon = Icons.Rounded.SupervisedUserCircle) {
+        MenuItem(label = "Kelola Pelanggan", icon = Icons.Rounded.SupervisedUserCircle) {
             navController.navigate("customer_list")
         }
-        SettingItem(label = "Kelola Pemasok", icon = Icons.Rounded.LocalShipping) {
-            navController.navigate("supplier_list")
-        }
+        MenuItem(label = "Catat Pengeluaran", icon = Icons.Rounded.Paid) {}
     }
 }

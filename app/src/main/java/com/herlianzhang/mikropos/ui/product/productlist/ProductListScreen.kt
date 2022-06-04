@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.herlianzhang.mikropos.ui.common.*
-import com.herlianzhang.mikropos.utils.toRupiah
+import com.herlianzhang.mikropos.utils.extensions.toRupiah
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -144,6 +144,7 @@ fun ProductListScreen(
                             item.name,
                             item.price?.toRupiah(),
                             Modifier.animateItemPlacement(),
+                            "stok ${item.totalStock}",
                             onClicked = {
                                 navController.navigate("product_detail/${item.id}")
                             }

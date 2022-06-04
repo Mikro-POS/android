@@ -23,6 +23,7 @@ fun ListItem(
     title: String?,
     subtitle: String?,
     modifier: Modifier = Modifier,
+    caption: String? = null,
     onClicked: () -> Unit
 ) {
     Row(
@@ -60,8 +61,16 @@ fun ListItem(
                 style = MaterialTheme
                     .typography
                     .body2
-                    .copy(color = Color.Gray)
             )
+            if (caption != null) {
+                Text(
+                    caption,
+                    style = MaterialTheme
+                        .typography
+                        .body2
+                        .copy(color = Color.Gray)
+                )
+            }
         }
     }
 }
