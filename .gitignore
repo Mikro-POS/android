@@ -17,3 +17,5 @@ local.properties
 release
 *.jks
 key.properties
+google-services.json
+fastlane/report.xml

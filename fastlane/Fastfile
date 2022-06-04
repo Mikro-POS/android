@@ -16,16 +16,42 @@
 default_platform(:android)
 
 platform :android do
+  lane :increment_version do
+    latest_release = firebase_app_distribution_get_latest_release(
+      app: ENV['FIREBASE_APP_ID'],
+      firebase_cli_token: ENV['FIREBASE_CLI_TOKEN']
+    )
+    android_set_version_code(
+      version_code: (latest_release || {}).fetch(:buildVersion, 0).to_i + 1
+    )
+    android_set_version_name(
+      version_name: (git_branch.match(/\d+\.\d+\.\d*/) || "1.0.0").to_s
+    )
+  end
+
+  lane :building_app do
+    gradle(
+      task: "clean"
+    )
+    gradle(
+      task: "assemble",
+      build_type: "Release"
+    )
+  end
+
   desc "Deploy to Firebase"
-  lane :deploy do
+  lane :deploy_firebase do
     begin
+      increment_version
+      building_app
       firebase_app_distribution(
         groups: "tester",
-        release_notes: "Bug fixed and improvements.",
+        release_notes_file: "release-notes.txt",
         apk_path: "app/build/outputs/apk/release/app-release.apk",
+        android_artifact_type: "APK",
         app: ENV['FIREBASE_APP_ID'],
         firebase_cli_path: "/usr/local/bin/firebase",
-        firebase_cli_token: ENV['FIREBASE_CLI_TOKEN'],
+        firebase_cli_token: ENV['FIREBASE_CLI_TOKEN']
       )
     end
   end

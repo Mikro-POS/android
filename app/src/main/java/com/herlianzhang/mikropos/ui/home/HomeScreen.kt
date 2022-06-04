@@ -44,7 +44,9 @@ fun getLabel(route: String?): String {
 fun HomeAction(route: String?, viewModel: HomeViewModel) {
     when (route) {
         Screen.Cart.route -> {
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                throw RuntimeException("percobaan ke dua")
+            }) {
                 Icon(Icons.Rounded.Add, contentDescription = null)
             }
         }
