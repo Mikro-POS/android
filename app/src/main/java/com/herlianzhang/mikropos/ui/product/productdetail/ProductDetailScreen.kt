@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ProductDetailScreen(
-    id: Int,
     navController: NavController,
     viewModel: ProductDetailViewModel
 ) {
@@ -71,11 +70,6 @@ fun ProductDetailScreen(
                 savedState.remove<String>("qr-result")
             }
         }
-    }
-
-    LaunchedEffect(key1 = true) {
-        if (data == null)
-            viewModel.setProductId(id)
     }
 
     LaunchedEffect(Unit) {
@@ -192,7 +186,7 @@ fun ProductDetailScreen(
                         isShowDialog = true
                     }
                     DetailItem(key = "Total Stok", value = data.totalStock?.toString()) {
-                        navController.navigate("stock_list/$id")
+                        navController.navigate("stock_list/${viewModel.id}")
                     }
                 }
             }
@@ -223,7 +217,7 @@ fun ProductDetailScreen(
             )
             DefaultSnackbar(
                 snackbarHostState = scaffoldState.snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.TopCenter)
             ) {
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }

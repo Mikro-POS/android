@@ -1,14 +1,26 @@
 package com.herlianzhang.mikropos.ui.product.productdetail
 
+import android.app.Activity
 import android.app.Application
 import android.net.Uri
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.ImageRepository
 import com.herlianzhang.mikropos.repository.ProductRepository
+import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
 import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
 import com.herlianzhang.mikropos.vo.ProductDetail
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -16,13 +28,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class ProductDetailViewModel @Inject constructor(
+class ProductDetailViewModel @AssistedInject constructor(
+    @Assisted
+    val id: Int,
     private val productRepository: ProductRepository,
     private val imageRepository: ImageRepository,
     app: Application
 ): AndroidViewModel(app) {
-    private var id: Int = 0
     private var updateJob: Job? = null
     private var uploadJob: Job? = null
 
@@ -54,8 +66,7 @@ class ProductDetailViewModel @Inject constructor(
     val event: Flow<ProductDetailEvent>
         get() = _event.receiveAsFlow()
 
-    fun setProductId(id: Int) {
-        this.id = id
+    init {
         getProduct()
     }
 
@@ -142,6 +153,31 @@ class ProductDetailViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(id: Int): ProductDetailViewModel
+    }
+
+    companion object {
+        private fun providesFactory(
+            assistedFactory: Factory,
+            productId: Int
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(productId) as T
+            }
+        }
+
+        @Composable
+        fun getViewModel(id: Int): ProductDetailViewModel {
+            val factory = EntryPointAccessors.fromActivity(
+                LocalContext.current as Activity,
+                MainActivity.ViewModelFactoryProvider::class.java
+            ).productDetailViewModelFactory()
+            return viewModel(factory = providesFactory(factory, id))
         }
     }
 }

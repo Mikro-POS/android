@@ -1,10 +1,5 @@
 package com.herlianzhang.mikropos.vo
 
-enum class StockSource {
-    SUPPLIER,
-    CUSTOMER
-}
-
 data class Stock(
     val id: Int,
     val productId: Int,

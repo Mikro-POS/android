@@ -73,12 +73,14 @@ class CreateCustomerViewModel @Inject constructor(
 
     fun createCustomer(
         name: String,
-        phoneNumber: String,
+        phoneNumber1: String,
+        phoneNumber2: String,
         address: String
     ) {
         val params = mutableMapOf<String, Any>()
         params["name"] = name
-        params["phone_number"] = phoneNumber
+        params["phone_number_1"] = phoneNumber1
+        params["phone_number_2"] = phoneNumber2
         if (address.isNotBlank())
             params["address"] = address
         currUrl?.let { url ->

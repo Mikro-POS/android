@@ -94,6 +94,7 @@ fun CreateProductScreen(
             }
         }
     }
+
     Scaffold(
         scaffoldState = scaffoldState,
         snackbarHost = {
@@ -233,7 +234,7 @@ fun CreateProductScreen(
             LoadingView(isLoading)
             DefaultSnackbar(
                 snackbarHostState = scaffoldState.snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.TopCenter)
             ) {
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }

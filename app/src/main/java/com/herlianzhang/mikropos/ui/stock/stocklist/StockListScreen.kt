@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun StockListScreen(
-    productId: Int,
     navController: NavController,
     viewModel: StockListViewModel
 ) {
@@ -47,7 +46,6 @@ fun StockListScreen(
     }
 
     LaunchedEffect(true) {
-        viewModel.setProductId(productId)
         viewModel.event.collectLatest { event ->
             when (event) {
                 is StockListEvent.ShowErrorSnackbar -> {
@@ -74,7 +72,7 @@ fun StockListScreen(
                     textAlign = TextAlign.Center
                 )
                 IconButton(onClick = {
-                    navController.navigate("create_stock")
+                    navController.navigate("create_stock/${viewModel.productId}")
                 }) {
                     Icon(Icons.Rounded.Add, contentDescription = null)
                 }

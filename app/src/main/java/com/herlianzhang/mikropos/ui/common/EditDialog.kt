@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -46,7 +45,6 @@ fun EditDialog(
     onSubmit: () -> Unit,
     navigateToScanner: (() -> Unit)? = null
 ) {
-    val localFocusManager = LocalFocusManager.current
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
     val progress by animateLottieCompositionAsState(
         composition,
@@ -91,7 +89,9 @@ fun EditDialog(
                                     imeAction = ImeAction.Done
                                 ),
                                 keyboardActions = KeyboardActions(
-                                    onDone = { localFocusManager.clearFocus() }
+                                    onDone = {
+                                        onSubmit()
+                                    }
                                 ),
                                 visualTransformation = if (type == EditDialogType.Currency) CurrencyVisualTransformation() else VisualTransformation.None,
                                 onValueChange = {

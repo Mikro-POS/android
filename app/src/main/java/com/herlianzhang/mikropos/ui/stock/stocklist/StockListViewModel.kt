@@ -1,7 +1,13 @@
 package com.herlianzhang.mikropos.ui.stock.stocklist
 
+import android.app.Activity
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
 import com.herlianzhang.mikropos.repository.StockRepository
@@ -10,7 +16,10 @@ import com.herlianzhang.mikropos.utils.extensions.formatDate
 import com.herlianzhang.mikropos.utils.extensions.getPrinter
 import com.herlianzhang.mikropos.utils.extensions.printFormattedText
 import com.herlianzhang.mikropos.vo.Stock
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -19,14 +28,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class StockListViewModel @Inject constructor(
+class StockListViewModel @AssistedInject constructor(
+    @Assisted val productId: Int,
     private val stockRepository: StockRepository,
     private val userPref: UserPreferences
 ) : ViewModel() {
-    private var productId: Int = 0
     private val limit: Int = 20
     private var page: Int = 1
     private var isLastPage: Boolean = false
@@ -56,15 +63,14 @@ class StockListViewModel @Inject constructor(
     val event: Flow<StockListEvent>
         get() = _event.receiveAsFlow()
 
-    fun setProductId(id: Int) {
-        this.productId = id
-        getStocks()
-    }
-
     fun loadMore() {
         if (isLastPage || fetchJob?.isActive == true)
             return
         page += 1
+        getStocks()
+    }
+
+    init {
         getStocks()
     }
 
@@ -154,6 +160,31 @@ class StockListViewModel @Inject constructor(
                 _isLoadMore.emit(!isLastPage)
                 _isLoading.emit(false)
             }
+        }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(productId: Int): StockListViewModel
+    }
+
+    companion object {
+        private fun providesFactory(
+            assistedFactory: Factory,
+            productId: Int
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(productId) as T
+            }
+        }
+
+        @Composable
+        fun getViewModel(productId: Int): StockListViewModel {
+            val factory = EntryPointAccessors.fromActivity(
+                LocalContext.current as Activity,
+                MainActivity.ViewModelFactoryProvider::class.java
+            ).stockListViewModelFactory()
+            return viewModel(factory = providesFactory(factory, productId))
         }
     }
 }

@@ -28,6 +28,8 @@ import com.herlianzhang.mikropos.ui.product.productlist.ProductListViewModel
 import com.herlianzhang.mikropos.ui.qrscan.QrScannerScreen
 import com.herlianzhang.mikropos.ui.register.RegisterScreen
 import com.herlianzhang.mikropos.ui.register.RegisterViewModel
+import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockScreen
+import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
 import com.herlianzhang.mikropos.ui.stock.stocklist.StockListScreen
 import com.herlianzhang.mikropos.ui.stock.stocklist.StockListViewModel
 
@@ -108,8 +110,8 @@ fun NavigationComponent(
             arguments = listOf(navArgument("productId") { type = NavType.IntType })
         ) { backStackEntry ->
             backStackEntry.arguments?.getInt("productId")?.let { id ->
-                val viewModel = hiltViewModel<ProductDetailViewModel>()
-                ProductDetailScreen(id, navController, viewModel)
+                val viewModel = ProductDetailViewModel.getViewModel(id)
+                ProductDetailScreen(navController, viewModel)
             }
         }
         composable("customer_list") {
@@ -125,8 +127,8 @@ fun NavigationComponent(
             arguments = listOf(navArgument("customerId") { type = NavType.IntType })
         ) { backStackEntry ->
             backStackEntry.arguments?.getInt("customerId")?.let { id ->
-                val viewModel = hiltViewModel<CustomerDetailViewModel>()
-                CustomerDetailScreen(id, navController, viewModel)
+                val viewModel = CustomerDetailViewModel.getViewModel(id)
+                CustomerDetailScreen(navController, viewModel)
             }
         }
         composable(
@@ -134,8 +136,17 @@ fun NavigationComponent(
             arguments = listOf(navArgument("productId") { type = NavType.IntType })
         ) { backStackEntry ->
             backStackEntry.arguments?.getInt("productId")?.let { productId ->
-                val viewModel = hiltViewModel<StockListViewModel>()
-                StockListScreen(productId, navController, viewModel)
+                val viewModel = StockListViewModel.getViewModel(productId)
+                StockListScreen(navController, viewModel)
+            }
+        }
+        composable(
+            "create_stock/{productId}",
+            arguments = listOf(navArgument("productId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getInt("productId")?.let { productId ->
+                val viewModel = CreateStockViewModel.getViewModel(productId)
+                CreateStockScreen(navController, viewModel)
             }
         }
         composable("qr_scanner") {

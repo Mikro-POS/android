@@ -123,6 +123,7 @@ interface ApiService {
     ): Response<List<Stock>>
 
     @POST("stocks/{product_id}")
+    @JvmSuppressWildcards
     suspend fun createStock(
         @Path("product_id") productId: Int,
         @Body params: Map<String, Any>
