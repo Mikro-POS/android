@@ -43,7 +43,7 @@ fun LoginScreen(
     val scaffoldState = rememberScaffoldState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(true) {
         viewModel.event.collectLatest { event ->
             when (event) {
                 is LoginEvent.ShowErrorSnackbar -> {

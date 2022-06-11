@@ -1,7 +1,6 @@
 package com.herlianzhang.mikropos.utils.extensions
 
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 fun Int?.toRupiah(): String {

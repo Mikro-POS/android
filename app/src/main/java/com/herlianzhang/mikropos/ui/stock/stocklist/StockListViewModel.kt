@@ -2,7 +2,6 @@ package com.herlianzhang.mikropos.ui.stock.stocklist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dantsu.escposprinter.EscPosPrinter
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
 import com.herlianzhang.mikropos.repository.StockRepository
@@ -14,8 +13,11 @@ import com.herlianzhang.mikropos.vo.Stock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,6 +51,10 @@ class StockListViewModel @Inject constructor(
     private val _isError = MutableStateFlow(false)
     val isError: StateFlow<Boolean>
         get() = _isError
+
+    private val _event = Channel<StockListEvent>()
+    val event: Flow<StockListEvent>
+        get() = _event.receiveAsFlow()
 
     fun setProductId(id: Int) {
         this.productId = id
@@ -108,6 +114,18 @@ class StockListViewModel @Inject constructor(
                 when (result) {
                     is ApiResult.Success -> handleSuccess(result.data ?: emptyList())
                     is ApiResult.Failed -> handleError()
+                    is ApiResult.Loading -> handleLoading(result.state)
+                }
+            }
+        }
+    }
+
+    fun deleteStock(stockId: Int) {
+        viewModelScope.launch {
+            stockRepository.deleteStock(productId, stockId).collect { result ->
+                when (result) {
+                    is ApiResult.Success -> refresh()
+                    is ApiResult.Failed -> _event.send(StockListEvent.ShowErrorSnackbar(result.message))
                     is ApiResult.Loading -> handleLoading(result.state)
                 }
             }

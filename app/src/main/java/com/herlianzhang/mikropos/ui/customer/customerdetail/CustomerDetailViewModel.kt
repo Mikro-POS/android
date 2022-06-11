@@ -19,13 +19,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class CustomerDetailEvent {
-    data class ShowErrorSnackbar(val message: String?) : CustomerDetailEvent()
-    object HideDialog : CustomerDetailEvent()
-    object SetHasChanges : CustomerDetailEvent()
-    object Back : CustomerDetailEvent()
-}
-
 @HiltViewModel
 class CustomerDetailViewModel @Inject constructor(
     private val CustomerRepository: CustomerRepository,

@@ -25,11 +25,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-sealed class CreateCustomerEvent {
-    data class ShowErrorSnackbar(val message: String?) : CreateCustomerEvent()
-    object BackWithResult : CreateCustomerEvent()
-}
-
 @HiltViewModel
 class CreateCustomerViewModel @Inject constructor(
     private val imageRepository: ImageRepository,

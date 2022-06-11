@@ -16,13 +16,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class ProductDetailEvent {
-    data class ShowErrorSnackbar(val message: String?) : ProductDetailEvent()
-    object HideDialog : ProductDetailEvent()
-    object SetHasChanges : ProductDetailEvent()
-    object Back : ProductDetailEvent()
-}
-
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
     private val productRepository: ProductRepository,

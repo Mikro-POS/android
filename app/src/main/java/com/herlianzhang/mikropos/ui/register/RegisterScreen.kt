@@ -24,6 +24,11 @@ import com.herlianzhang.mikropos.ui.common.DefaultSnackbar
 import com.herlianzhang.mikropos.ui.common.LoadingView
 import kotlinx.coroutines.flow.collectLatest
 
+sealed class RegisterEvent {
+    data class ShowErrorSnackbar(val message: String?) : RegisterEvent()
+    object NavigateToHome : RegisterEvent()
+}
+
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel,

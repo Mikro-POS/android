@@ -10,10 +10,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class HomeEvent {
-    object Logout: HomeEvent()
-}
-
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val userPref: UserPreferences
