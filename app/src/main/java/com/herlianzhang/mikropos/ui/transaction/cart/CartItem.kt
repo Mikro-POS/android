@@ -1,0 +1,72 @@
+package com.herlianzhang.mikropos.ui.transaction.cart
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Remove
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.herlianzhang.mikropos.db.cart.Cart
+import com.herlianzhang.mikropos.utils.extensions.toRupiah
+
+@Composable
+fun CartItem(
+    item: Cart,
+    onIncrease: () -> Unit,
+    onDecrease: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = item.photo,
+            contentDescription = null,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(Color.LightGray),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = item.name ?: "-",
+                style = MaterialTheme.typography.h5,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = item.price.toRupiah(),
+                color = Color.Gray
+            )
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        IconButton(onClick = onIncrease) {
+            Icon(Icons.Rounded.Add, contentDescription = null)
+        }
+        Text(
+            text = item.amount.toString(),
+            modifier = Modifier.padding(horizontal = 6.dp),
+            fontWeight = FontWeight.Bold
+        )
+        IconButton(onClick = onDecrease) {
+            Icon(Icons.Rounded.Remove, contentDescription = null)
+        }
+    }
+}

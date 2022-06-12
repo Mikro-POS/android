@@ -20,37 +20,6 @@ interface ApiService {
         @Body params: Map<String, Any>
     ): Response<User>
 
-    // supplier
-    @GET("suppliers/")
-    suspend fun getSuppliers(
-        @Query("limit") limit: Int = 10,
-        @Query("page") page: Int = 1,
-        @Query("search") search: String = ""
-    ): Response<List<Supplier>>
-
-    @GET("suppliers/{supplier_id}")
-    suspend fun getSupplier(
-        @Path("supplier_id") supplierId: Int
-    ): Response<SupplierDetail>
-
-    @POST("suppliers")
-    @JvmSuppressWildcards
-    suspend fun createSupplier(
-        @Body params: Map<String, Any>
-    ): Response<Supplier>
-
-    @PATCH("suppliers/{supplier_id}")
-    @JvmSuppressWildcards
-    suspend fun updateSupplier(
-        @Path("supplier_id") supplierId: Int,
-        @Body params: Map<String, Any>
-    ): Response<SupplierDetail>
-
-    @DELETE("suppliers/{supplier_id}")
-    suspend fun deleteSupplier(
-        @Path("supplier_id") supplierId: Int
-    ): Response<Any?>
-
     // customer
     @GET("customers/")
     suspend fun getCustomers(

@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -20,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.herlianzhang.mikropos.ui.common.Screen
 import com.herlianzhang.mikropos.ui.setting.MenuScreen
 import com.herlianzhang.mikropos.ui.transaction.cart.CartScreen
+import com.herlianzhang.mikropos.ui.transaction.cart.CartViewModel
 import com.herlianzhang.mikropos.ui.transaction.transactionlist.TransactionListScreen
 import kotlinx.coroutines.flow.collectLatest
 
@@ -94,7 +96,8 @@ fun HomeScreen(
             Modifier.padding(innerPadding)
         ) {
             composable(Screen.Cart.route) {
-                CartScreen()
+                val viewModel = hiltViewModel<CartViewModel>()
+                CartScreen(viewModel)
             }
             composable(Screen.TransactionList.route) {
                 TransactionListScreen()

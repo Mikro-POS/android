@@ -10,26 +10,27 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
+import com.herlianzhang.mikropos.db.cart.Cart
+import com.herlianzhang.mikropos.repository.CartRepository
 import com.herlianzhang.mikropos.repository.ProductRepository
 import com.herlianzhang.mikropos.vo.Product
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ProductListViewModel @AssistedInject constructor(
     @Assisted
     private val isSelectMode: Boolean,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val cartRepository: CartRepository
 ): ViewModel() {
     private val limit: Int = 20
     private var page: Int = 1
@@ -104,11 +105,21 @@ class ProductListViewModel @AssistedInject constructor(
     }
 
     fun onClickProduct(product: Product) {
-        if (isSelectMode) {
-            Timber.d("Masuk select mode $product")
-        } else {
-            viewModelScope.launch {
-                _event.send(ProductListEvent.NavigateToProductDetail(product.id))
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isSelectMode) {
+                val dbCart = cartRepository.getCartById(product.id)
+                val cart = Cart(
+                    id = product.id,
+                    name = product.name,
+                    price = product.price,
+                    photo = product.photo,
+                    amount = dbCart?.amount?.plus(1) ?: 1
+                )
+                cartRepository.insertCart(cart)
+            } else {
+                withContext(Dispatchers.Main) {
+                    _event.send(ProductListEvent.NavigateToProductDetail(product.id))
+                }
             }
         }
     }
