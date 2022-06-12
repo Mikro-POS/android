@@ -15,6 +15,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+      - name: Decrypt Android keys
+        run: sh ./.github/scripts/decrypt_secret.sh
+        env:
+          ANDROID_KEYS_ZIP_PASSPHRASE: ${{ secrets.ANDROID_KEYS_ZIP_PASSPHRASE }}
       - name: Clean Build
         run: ./gradlew clean
       - name: Build apk Debug

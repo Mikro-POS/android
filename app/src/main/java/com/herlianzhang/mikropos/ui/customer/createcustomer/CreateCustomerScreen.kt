@@ -46,7 +46,10 @@ fun CreateCustomerScreen(
     var name by rememberSaveable {
         mutableStateOf("")
     }
-    var phoneNumber by rememberSaveable {
+    var phoneNumber1 by rememberSaveable {
+        mutableStateOf("")
+    }
+    var phoneNumber2 by rememberSaveable {
         mutableStateOf("")
     }
     var address by rememberSaveable {
@@ -98,11 +101,12 @@ fun CreateCustomerScreen(
                     onClick = {
                         viewModel.createCustomer(
                             name,
-                            phoneNumber,
+                            phoneNumber1,
+                            phoneNumber2,
                             address
                         )
                     },
-                    enabled = name.isNotBlank() && phoneNumber.isNotBlank()
+                    enabled = name.isNotBlank() && phoneNumber1.isNotBlank()
                 ) {
                     Icon(Icons.Rounded.Done, contentDescription = null)
                 }
@@ -162,10 +166,10 @@ fun CreateCustomerScreen(
 
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = phoneNumber,
+                    value = phoneNumber1,
                     shape = RoundedCornerShape(12.dp),
                     label = {
-                        Text("Nomor Telepon")
+                        Text("Nomor Telepon 1")
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -175,7 +179,25 @@ fun CreateCustomerScreen(
                     keyboardActions = KeyboardActions(
                         onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
                     ),
-                    onValueChange = { phoneNumber = it },
+                    onValueChange = { phoneNumber1 = it },
+                )
+
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = phoneNumber2,
+                    shape = RoundedCornerShape(12.dp),
+                    label = {
+                        Text("Nomor Telepon 2")
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Phone
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
+                    ),
+                    onValueChange = { phoneNumber2 = it },
                 )
 
                 OutlinedTextField(
@@ -194,10 +216,11 @@ fun CreateCustomerScreen(
                     keyboardActions = KeyboardActions(
                         onDone = {
                             localFocusManager.clearFocus()
-                            if (name.isNotBlank() && phoneNumber.isNotBlank())
+                            if (name.isNotBlank() && phoneNumber1.isNotBlank())
                                 viewModel.createCustomer(
                                     name,
-                                    phoneNumber,
+                                    phoneNumber1,
+                                    phoneNumber2,
                                     address
                                 )
                         }
@@ -208,7 +231,7 @@ fun CreateCustomerScreen(
             LoadingView(isLoading)
             DefaultSnackbar(
                 snackbarHostState = scaffoldState.snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.TopCenter)
             ) {
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }

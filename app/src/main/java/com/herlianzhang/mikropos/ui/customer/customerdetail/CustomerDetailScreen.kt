@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CustomerDetailScreen(
-    id: Int,
     navController: NavController,
     viewModel: CustomerDetailViewModel
 ) {
@@ -61,11 +60,6 @@ fun CustomerDetailScreen(
             uri ?: return@rememberLauncherForActivityResult
             viewModel.uploadImage(uri)
         }
-
-    LaunchedEffect(key1 = true) {
-        if (data == null)
-            viewModel.setCustomerId(id)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.event.collectLatest { event ->
@@ -166,10 +160,17 @@ fun CustomerDetailScreen(
                         dialogType = EditDialogType.Default
                         isShowDialog = true
                     }
-                    DetailItem(key = "Nomor Telepon", value = data.phoneNumber) {
-                        dialogKey = "phone_number"
+                    DetailItem(key = "Nomor Telepon 1", value = data.phoneNumber) {
+                        dialogKey = "phone_number_1"
                         dialogValue = data.phoneNumber ?: ""
-                        dialogTitle = "Ubah Nomor Telepon"
+                        dialogTitle = "Ubah Nomor Telepon 1"
+                        dialogType = EditDialogType.Default
+                        isShowDialog = true
+                    }
+                    DetailItem(key = "Nomor Telepon 2", value = data.phoneNumber2) {
+                        dialogKey = "phone_number_2"
+                        dialogValue = data.phoneNumber2 ?: ""
+                        dialogTitle = "Ubah Nomor Telepon 2"
                         dialogType = EditDialogType.Default
                         isShowDialog = true
                     }
@@ -190,7 +191,7 @@ fun CustomerDetailScreen(
                 changeValue = { dialogValue = it },
                 isLoading = isDialogLoading,
                 type = dialogType,
-                keyboardType = if (dialogKey == "phone_number") KeyboardType.Phone else null,
+                keyboardType = if (dialogKey == "phone_number_1" || dialogKey == "phone_number_2") KeyboardType.Phone else null,
                 isDismiss = isShowDialog,
                 onDismiss = {
                     viewModel.cancelUpdateCustomer()
@@ -204,7 +205,7 @@ fun CustomerDetailScreen(
             )
             DefaultSnackbar(
                 snackbarHostState = scaffoldState.snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.TopCenter)
             ) {
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }

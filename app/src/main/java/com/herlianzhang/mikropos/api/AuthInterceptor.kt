@@ -10,7 +10,7 @@ class AuthInterceptor @Inject constructor(private val userPref: UserPreferences)
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
-        var request = chain.request().newBuilder()
+        val request = chain.request().newBuilder()
             .header("Accept", "application/json")
             .also {
                 val accessToken = userPref.accessToken ?: return@also

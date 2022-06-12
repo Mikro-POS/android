@@ -1,4 +1,4 @@
-package com.herlianzhang.mikropos.utils
+package com.herlianzhang.mikropos.utils.extensions
 
 import java.text.SimpleDateFormat
 import java.util.*

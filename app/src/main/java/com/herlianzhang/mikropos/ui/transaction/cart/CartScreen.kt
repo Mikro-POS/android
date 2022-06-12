@@ -1,4 +1,4 @@
-package com.herlianzhang.mikropos.ui.transaction.createtransaction
+package com.herlianzhang.mikropos.ui.transaction.cart
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CreateTransactionScreen() {
+fun CartScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()

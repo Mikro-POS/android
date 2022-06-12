@@ -12,7 +12,7 @@ import com.herlianzhang.mikropos.App
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.CustomerRepository
 import com.herlianzhang.mikropos.repository.ImageRepository
-import com.herlianzhang.mikropos.utils.getImageDisplayName
+import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,11 +24,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-
-sealed class CreateCustomerEvent {
-    data class ShowErrorSnackbar(val message: String?) : CreateCustomerEvent()
-    object BackWithResult : CreateCustomerEvent()
-}
 
 @HiltViewModel
 class CreateCustomerViewModel @Inject constructor(
@@ -78,12 +73,14 @@ class CreateCustomerViewModel @Inject constructor(
 
     fun createCustomer(
         name: String,
-        phoneNumber: String,
+        phoneNumber1: String,
+        phoneNumber2: String,
         address: String
     ) {
         val params = mutableMapOf<String, Any>()
         params["name"] = name
-        params["phone_number"] = phoneNumber
+        params["phone_number_1"] = phoneNumber1
+        params["phone_number_2"] = phoneNumber2
         if (address.isNotBlank())
             params["address"] = address
         currUrl?.let { url ->

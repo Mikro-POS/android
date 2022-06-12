@@ -8,9 +8,16 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.herlianzhang.mikropos.ui.customer.customerdetail.CustomerDetailViewModel
+import com.herlianzhang.mikropos.ui.product.productdetail.ProductDetailViewModel
+import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
+import com.herlianzhang.mikropos.ui.stock.stocklist.StockListViewModel
 import com.herlianzhang.mikropos.ui.theme.MikroPOSTheme
 import com.herlianzhang.mikropos.utils.UserPreferences
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.components.ActivityComponent
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -18,6 +25,15 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var userPref: UserPreferences
+
+    @EntryPoint
+    @InstallIn(ActivityComponent::class)
+    interface ViewModelFactoryProvider {
+        fun customerDetailViewModelFactory(): CustomerDetailViewModel.Factory
+        fun productDetailViewModelFactory(): ProductDetailViewModel.Factory
+        fun stockListViewModelFactory(): StockListViewModel.Factory
+        fun createStockViewModelFactory(): CreateStockViewModel.Factory
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

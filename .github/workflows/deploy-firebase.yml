@@ -28,12 +28,8 @@ jobs:
         run: sh ./.github/scripts/decrypt_secret.sh
         env:
           ANDROID_KEYS_ZIP_PASSPHRASE: ${{ secrets.ANDROID_KEYS_ZIP_PASSPHRASE }}
-      - name: Clean Build
-        run: ./gradlew clean
-      - name: Build apk release
-        run: ./gradlew assembleRelease
       - name: run fastlane
-        run: bundle exec fastlane deploy
+        run: bundle exec fastlane deploy_firebase
         env:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_CLI_TOKEN: ${{ secrets.FIREBASE_CLI_TOKEN }}

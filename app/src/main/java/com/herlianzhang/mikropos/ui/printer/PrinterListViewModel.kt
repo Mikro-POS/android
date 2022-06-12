@@ -6,18 +6,17 @@ import android.bluetooth.BluetoothManager
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.dantsu.escposprinter.EscPosPrinter
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections
 import com.herlianzhang.mikropos.App
 import com.herlianzhang.mikropos.utils.UserPreferences
+import com.herlianzhang.mikropos.utils.extensions.getPrinter
+import com.herlianzhang.mikropos.utils.extensions.printFormattedText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,23 +59,17 @@ class PrinterListViewModel @Inject constructor(
     fun getPrinters() {
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.emit(true)
-            val printers = BluetoothPrintersConnections().list ?: return@launch
-            for (printer in printers) {
-                if (printer.device.address == userPref.printerAddress) {
-                    try {
-                        printer.connect()
-                        _isPrinterAvailable.emit(true)
-                        availablePrinter = printer
-                    } catch(_: Exception) {
-                        _isPrinterAvailable.emit(false)
-                        availablePrinter = null
-                        Timber.d("masuk fail connect")
-
-                    }
-                }
+            try {
+                val printers = BluetoothPrintersConnections().list!!
+                _printers.emit(printers.toList())
+                availablePrinter = userPref.getPrinter(printers)
+                _isPrinterAvailable.emit(true)
+            } catch(_: Exception) {
+                availablePrinter = null
+                _isPrinterAvailable.emit(false)
+            } finally {
+                _isLoading.emit(false)
             }
-            _printers.emit(printers.toList())
-            _isLoading.emit(false)
         }
     }
 
@@ -92,12 +85,13 @@ class PrinterListViewModel @Inject constructor(
             _isLoading.emit(true)
             try {
                 val printer = availablePrinter?.connect()!!
-                EscPosPrinter(printer, 203, 48f, 32)
-                    .printFormattedText(
-                        "[C]<b>================================</b>\n" +
-                                "[C]<b>Coba Print</b>\n" +
-                                "[C]<b>================================</b>"
-                    )
+                printer.printFormattedText(
+                    """
+                        [C]<b>================================</b>
+                        [C]<b>Coba Print</b>
+                        [C]<b>================================</b>
+                    """.trimIndent()
+                )
                 _isLoading.emit(false)
             } catch(_: Exception) {
                 availablePrinter = null

@@ -12,7 +12,7 @@ import com.herlianzhang.mikropos.App
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.ImageRepository
 import com.herlianzhang.mikropos.repository.ProductRepository
-import com.herlianzhang.mikropos.utils.getImageDisplayName
+import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,11 +24,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-
-sealed class CreateProductEvent {
-    data class ShowErrorSnackbar(val message: String?) : CreateProductEvent()
-    object BackWithResult : CreateProductEvent()
-}
 
 @HiltViewModel
 class CreateProductViewModel @Inject constructor(

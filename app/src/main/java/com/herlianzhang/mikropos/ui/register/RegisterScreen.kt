@@ -24,6 +24,11 @@ import com.herlianzhang.mikropos.ui.common.DefaultSnackbar
 import com.herlianzhang.mikropos.ui.common.LoadingView
 import kotlinx.coroutines.flow.collectLatest
 
+sealed class RegisterEvent {
+    data class ShowErrorSnackbar(val message: String?) : RegisterEvent()
+    object NavigateToHome : RegisterEvent()
+}
+
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel,
@@ -77,7 +82,7 @@ fun RegisterScreen(
                         .fillMaxWidth()
                         .weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterVertically)
+                    verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically)
                 ) {
                     Text(
                         "Daftar",
@@ -86,6 +91,8 @@ fun RegisterScreen(
                             .h4
                             .copy(fontWeight = FontWeight.Bold)
                     )
+
+                    Spacer(modifier = Modifier.height(28.dp))
 
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
@@ -166,6 +173,16 @@ fun RegisterScreen(
                         ),
                         onValueChange = { password = it.replace(" ", "") }
                     )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Sudah punya akun?")
+                        TextButton(onClick = navigateToLogin) {
+                            Text("Masuk")
+                        }
+                    }
                 }
                 Spacer(Modifier.height(24.dp))
                 Button(
@@ -182,12 +199,6 @@ fun RegisterScreen(
                 ) {
                     Text("Daftar")
                 }
-            }
-            TextButton(
-                modifier = Modifier.padding(20.dp),
-                onClick = navigateToLogin
-            ) {
-                Text("Masuk")
             }
             LoadingView(isLoading)
             DefaultSnackbar(

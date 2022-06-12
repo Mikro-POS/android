@@ -1,15 +1,25 @@
 package com.herlianzhang.mikropos.ui.customer.customerdetail
 
+import android.app.Activity
 import android.app.Application
 import android.net.Uri
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.CustomerRepository
 import com.herlianzhang.mikropos.repository.ImageRepository
-import com.herlianzhang.mikropos.utils.getImageDisplayName
+import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
 import com.herlianzhang.mikropos.vo.CustomerDetail
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -17,22 +27,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-sealed class CustomerDetailEvent {
-    data class ShowErrorSnackbar(val message: String?) : CustomerDetailEvent()
-    object HideDialog : CustomerDetailEvent()
-    object SetHasChanges : CustomerDetailEvent()
-    object Back : CustomerDetailEvent()
-}
-
-@HiltViewModel
-class CustomerDetailViewModel @Inject constructor(
+class CustomerDetailViewModel @AssistedInject constructor(
+    @Assisted
+    val id: Int,
     private val CustomerRepository: CustomerRepository,
     private val imageRepository: ImageRepository,
     app: Application
 ): AndroidViewModel(app) {
-    private var id: Int = 0
     private var updateJob: Job? = null
     private var uploadJob: Job? = null
 
@@ -64,8 +66,7 @@ class CustomerDetailViewModel @Inject constructor(
     val event: Flow<CustomerDetailEvent>
         get() = _event.receiveAsFlow()
 
-    fun setCustomerId(id: Int) {
-        this.id = id
+    init {
         getCustomer()
     }
 
@@ -152,6 +153,31 @@ class CustomerDetailViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(id: Int): CustomerDetailViewModel
+    }
+
+    companion object {
+        private fun providesFactory(
+            assistedFactory: Factory,
+            productId: Int
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(productId) as T
+            }
+        }
+
+        @Composable
+        fun getViewModel(id: Int): CustomerDetailViewModel {
+            val factory = EntryPointAccessors.fromActivity(
+                LocalContext.current as Activity,
+                MainActivity.ViewModelFactoryProvider::class.java
+            ).customerDetailViewModelFactory()
+            return viewModel(factory = providesFactory(factory, id))
         }
     }
 }
