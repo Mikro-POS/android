@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.herlianzhang.mikropos.ui.customer.customerdetail.CustomerDetailViewModel
 import com.herlianzhang.mikropos.ui.product.productdetail.ProductDetailViewModel
+import com.herlianzhang.mikropos.ui.product.productlist.ProductListViewModel
 import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
 import com.herlianzhang.mikropos.ui.stock.stocklist.StockListViewModel
 import com.herlianzhang.mikropos.ui.theme.MikroPOSTheme
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
     @EntryPoint
     @InstallIn(ActivityComponent::class)
     interface ViewModelFactoryProvider {
+        fun productListViewModelFactory(): ProductListViewModel.Factory
         fun customerDetailViewModelFactory(): CustomerDetailViewModel.Factory
         fun productDetailViewModelFactory(): ProductDetailViewModel.Factory
         fun stockListViewModelFactory(): StockListViewModel.Factory

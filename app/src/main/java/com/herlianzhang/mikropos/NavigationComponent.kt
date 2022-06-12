@@ -87,18 +87,15 @@ fun NavigationComponent(
             val viewModel = hiltViewModel<HomeViewModel>()
             HomeScreen(
                 navController,
-                viewModel,
-                navigateToLogin = {
-                    navController.navigate("login") {
-                        popUpTo("home") {
-                            inclusive = true
-                        }
-                    }
-                }
+                viewModel
             )
         }
         composable("product_list") {
-            val viewModel = hiltViewModel<ProductListViewModel>()
+            val viewModel = ProductListViewModel.getViewModel(isSelectMode = false)
+            ProductListScreen(navController, viewModel)
+        }
+        composable("select_product") {
+            val viewModel = ProductListViewModel.getViewModel(isSelectMode = true)
             ProductListScreen(navController, viewModel)
         }
         composable("create_product") {

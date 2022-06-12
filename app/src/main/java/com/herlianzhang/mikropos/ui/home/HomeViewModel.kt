@@ -18,6 +18,12 @@ class HomeViewModel @Inject constructor(
     val event: Flow<HomeEvent>
         get() = _event.receiveAsFlow()
 
+    fun navigateToSelectProduct() {
+        viewModelScope.launch {
+            _event.send(HomeEvent.NavigateToSelectProduct)
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
             userPref.clearUser()

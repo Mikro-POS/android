@@ -1,21 +1,34 @@
 package com.herlianzhang.mikropos.ui.product.productlist
 
+import android.app.Activity
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
 import com.herlianzhang.mikropos.repository.ProductRepository
 import com.herlianzhang.mikropos.vo.Product
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import timber.log.Timber
 
-@HiltViewModel
-class ProductListViewModel @Inject constructor(
+class ProductListViewModel @AssistedInject constructor(
+    @Assisted
+    private val isSelectMode: Boolean,
     private val productRepository: ProductRepository
 ): ViewModel() {
     private val limit: Int = 20
@@ -24,6 +37,14 @@ class ProductListViewModel @Inject constructor(
     private var isLastPage: Boolean = false
     private var searchJob: Job? = null
     private var fetchJob: Job? = null
+
+    private val _event = Channel<ProductListEvent>()
+    val event: Flow<ProductListEvent>
+        get() = _event.receiveAsFlow()
+
+    private val _title = MutableStateFlow("")
+    val title: StateFlow<String>
+        get() = _title
 
     private val _products = MutableStateFlow(listOf<Product>())
     val products: StateFlow<List<Product>>
@@ -46,6 +67,9 @@ class ProductListViewModel @Inject constructor(
         get() = _isError
 
     init {
+        viewModelScope.launch {
+            _title.emit(if (isSelectMode) "Pilih Produk" else "Daftar Produk")
+        }
         getProducts()
     }
 
@@ -76,6 +100,16 @@ class ProductListViewModel @Inject constructor(
         viewModelScope.launch {
             _isError.emit(false)
             getProducts()
+        }
+    }
+
+    fun onClickProduct(product: Product) {
+        if (isSelectMode) {
+            Timber.d("Masuk select mode $product")
+        } else {
+            viewModelScope.launch {
+                _event.send(ProductListEvent.NavigateToProductDetail(product.id))
+            }
         }
     }
 
@@ -114,6 +148,31 @@ class ProductListViewModel @Inject constructor(
                 _isLoadMore.emit(!isLastPage)
                 _isLoading.emit(false)
             }
+        }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(isSelectMode: Boolean): ProductListViewModel
+    }
+
+    companion object {
+        private fun providesFactory(
+            assistedFactory: Factory,
+            isSelectMode: Boolean
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(isSelectMode) as T
+            }
+        }
+
+        @Composable
+        fun getViewModel(isSelectMode: Boolean): ProductListViewModel {
+            val factory = EntryPointAccessors.fromActivity(
+                LocalContext.current as Activity,
+                MainActivity.ViewModelFactoryProvider::class.java
+            ).productListViewModelFactory()
+            return viewModel(factory = providesFactory(factory, isSelectMode))
         }
     }
 }

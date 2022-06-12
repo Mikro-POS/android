@@ -26,8 +26,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun HomeScreen(
     rootNavController: NavController,
-    viewModel: HomeViewModel,
-    navigateToLogin: () -> Unit
+    viewModel: HomeViewModel
 ) {
     val items = listOf(
         Screen.Cart,
@@ -42,7 +41,16 @@ fun HomeScreen(
     LaunchedEffect(key1 = Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
-                HomeEvent.Logout -> navigateToLogin()
+                HomeEvent.Logout -> {
+                    rootNavController.navigate("login") {
+                        popUpTo("home") {
+                            inclusive = true
+                        }
+                    }
+                }
+                HomeEvent.NavigateToSelectProduct -> {
+                    rootNavController.navigate("select_product")
+                }
             }
         }
     }

@@ -26,7 +26,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.herlianzhang.mikropos.ui.common.*
+import com.herlianzhang.mikropos.ui.product.productdetail.ProductDetailEvent
 import com.herlianzhang.mikropos.utils.extensions.toRupiah
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -38,6 +40,7 @@ fun ProductListScreen(
         mutableStateOf("")
     }
     val listState = rememberLazyListState()
+    val title by viewModel.title.collectAsState()
     val products by viewModel.products.collectAsState()
     val isProductEmpty by viewModel.isProductEmpty.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -68,6 +71,16 @@ fun ProductListScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.event.collectLatest { event ->
+            when (event) {
+                is ProductListEvent.NavigateToProductDetail -> {
+                    navController.navigate("product_detail/${event.id}")
+                }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar {
@@ -75,7 +88,7 @@ fun ProductListScreen(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = null)
                 }
                 Text(
-                    "Daftar Produk",
+                    title,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
@@ -146,7 +159,7 @@ fun ProductListScreen(
                             Modifier.animateItemPlacement(),
                             "stok ${item.totalStock}",
                             onClicked = {
-                                navController.navigate("product_detail/${item.id}")
+                                viewModel.onClickProduct(item)
                             }
                         )
                     }

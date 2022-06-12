@@ -14,7 +14,7 @@ fun HomeAction(route: String?, viewModel: HomeViewModel) {
     when (route) {
         Screen.Cart.route -> {
             IconButton(onClick = {
-                throw RuntimeException("percobaan ke dua")
+                viewModel.navigateToSelectProduct()
             }) {
                 Icon(Icons.Rounded.Add, contentDescription = null)
             }
