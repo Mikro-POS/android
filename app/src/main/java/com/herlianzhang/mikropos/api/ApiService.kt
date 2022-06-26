@@ -104,6 +104,12 @@ interface ApiService {
         @Path("stock_id") stockId: Int
     ): Response<Any?>
 
+    // transaction
+    @POST("transactions")
+    suspend fun createTransaction(
+        @Body data: CreateTransaction
+    ): Response<TransactionDetail>
+
     // default
     @POST("/upload-image")
     suspend fun uploadImage(

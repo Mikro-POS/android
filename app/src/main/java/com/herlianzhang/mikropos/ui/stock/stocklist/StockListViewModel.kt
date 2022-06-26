@@ -95,7 +95,7 @@ class StockListViewModel @AssistedInject constructor(
                         [C]<b>#ID: ${item.id}</b>
                         [C]<b>Total: ${item.amount}</b>
                         
-                        [C]<b>${item.createdAt.formatDate()}</b>
+                        [C]<b>${item.createdAt.formatDate() ?: "-"}</b>
                     """.trimIndent()
                 )
             } catch (_: Exception) {

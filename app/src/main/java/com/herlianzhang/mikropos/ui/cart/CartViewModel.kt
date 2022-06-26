@@ -1,4 +1,4 @@
-package com.herlianzhang.mikropos.ui.transaction.cart
+package com.herlianzhang.mikropos.ui.cart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,6 +37,12 @@ class CartViewModel @Inject constructor(
             } else {
                 cartRepository.insertCart(newCart)
             }
+        }
+    }
+
+    fun clearCart() {
+        viewModelScope.launch(Dispatchers.IO) {
+            cartRepository.deleteAll()
         }
     }
 }

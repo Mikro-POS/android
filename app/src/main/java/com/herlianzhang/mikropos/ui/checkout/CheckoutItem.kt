@@ -1,4 +1,4 @@
-package com.herlianzhang.mikropos.ui.transaction.cart
+package com.herlianzhang.mikropos.ui.checkout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,10 +23,8 @@ import com.herlianzhang.mikropos.db.cart.Cart
 import com.herlianzhang.mikropos.utils.extensions.toRupiah
 
 @Composable
-fun CartItem(
-    item: Cart,
-    onIncrease: () -> Unit,
-    onDecrease: () -> Unit
+fun CheckoutItem(
+    item: Cart
 ) {
     Row(
         modifier = Modifier.fillMaxSize(),
@@ -36,7 +34,7 @@ fun CartItem(
             model = item.photo,
             contentDescription = null,
             modifier = Modifier
-                .size(48.dp)
+                .size(32.dp)
                 .clip(CircleShape)
                 .background(Color.LightGray),
             contentScale = ContentScale.Crop
@@ -48,25 +46,20 @@ fun CartItem(
         ) {
             Text(
                 text = item.name ?: "-",
-                style = MaterialTheme.typography.h5,
+                style = MaterialTheme.typography.body1,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = item.price.toRupiah(),
+                style = MaterialTheme.typography.body2,
                 color = Color.Gray
             )
         }
         Spacer(modifier = Modifier.width(12.dp))
-        IconButton(onClick = onIncrease) {
-            Icon(Icons.Rounded.Add, contentDescription = null)
-        }
         Text(
             text = item.amount.toString(),
             modifier = Modifier.padding(horizontal = 6.dp),
             fontWeight = FontWeight.Bold
         )
-        IconButton(onClick = onDecrease) {
-            Icon(Icons.Rounded.Remove, contentDescription = null)
-        }
     }
 }

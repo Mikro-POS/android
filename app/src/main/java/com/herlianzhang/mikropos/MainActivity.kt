@@ -9,6 +9,7 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.herlianzhang.mikropos.ui.customer.customerdetail.CustomerDetailViewModel
+import com.herlianzhang.mikropos.ui.customer.customerlist.CustomerListViewModel
 import com.herlianzhang.mikropos.ui.product.productdetail.ProductDetailViewModel
 import com.herlianzhang.mikropos.ui.product.productlist.ProductListViewModel
 import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
     @EntryPoint
     @InstallIn(ActivityComponent::class)
     interface ViewModelFactoryProvider {
+        fun customerListViewModelFactory(): CustomerListViewModel.Factory
         fun productListViewModelFactory(): ProductListViewModel.Factory
         fun customerDetailViewModelFactory(): CustomerDetailViewModel.Factory
         fun productDetailViewModelFactory(): ProductDetailViewModel.Factory

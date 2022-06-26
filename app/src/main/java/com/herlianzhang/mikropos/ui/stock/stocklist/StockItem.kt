@@ -77,7 +77,7 @@ fun StockItem(
                     .background(Color.LightGray)
             )
             Text(
-                stock.createdAt.formatDate(),
+                stock.createdAt.formatDate() ?: "-",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 18.dp),

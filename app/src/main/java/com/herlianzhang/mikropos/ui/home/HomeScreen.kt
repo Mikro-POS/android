@@ -20,8 +20,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.herlianzhang.mikropos.ui.common.Screen
 import com.herlianzhang.mikropos.ui.setting.MenuScreen
-import com.herlianzhang.mikropos.ui.transaction.cart.CartScreen
-import com.herlianzhang.mikropos.ui.transaction.cart.CartViewModel
+import com.herlianzhang.mikropos.ui.cart.CartScreen
+import com.herlianzhang.mikropos.ui.cart.CartViewModel
 import com.herlianzhang.mikropos.ui.transaction.transactionlist.TransactionListScreen
 import kotlinx.coroutines.flow.collectLatest
 
@@ -97,7 +97,7 @@ fun HomeScreen(
         ) {
             composable(Screen.Cart.route) {
                 val viewModel = hiltViewModel<CartViewModel>()
-                CartScreen(viewModel)
+                CartScreen(rootNavController, viewModel)
             }
             composable(Screen.TransactionList.route) {
                 TransactionListScreen()

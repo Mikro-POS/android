@@ -7,6 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.herlianzhang.mikropos.ui.checkout.CheckoutScreen
+import com.herlianzhang.mikropos.ui.checkout.CheckoutViewModel
 import com.herlianzhang.mikropos.ui.customer.createcustomer.CreateCustomerScreen
 import com.herlianzhang.mikropos.ui.customer.createcustomer.CreateCustomerViewModel
 import com.herlianzhang.mikropos.ui.customer.customerdetail.CustomerDetailScreen
@@ -41,7 +43,7 @@ fun NavigationComponent(
     NavHost(
         navController = navController,
         startDestination = if (isAuthenticated) "home" else "login"
-//        startDestination = "product_list"
+//        startDestination = "checkout"
     ) {
         composable("login") {
             val viewModel = hiltViewModel<LoginViewModel>()
@@ -112,7 +114,11 @@ fun NavigationComponent(
             }
         }
         composable("customer_list") {
-            val viewModel = hiltViewModel<CustomerListViewModel>()
+            val viewModel = CustomerListViewModel.getViewModel(isSelectMode = false)
+            CustomerListScreen(navController, viewModel)
+        }
+        composable("select_customer") {
+            val viewModel = CustomerListViewModel.getViewModel(isSelectMode = true)
             CustomerListScreen(navController, viewModel)
         }
         composable("create_customer") {
@@ -152,6 +158,10 @@ fun NavigationComponent(
         composable("printer_list") {
             val viewModel = hiltViewModel<PrinterListViewModel>()
             PrinterListScreen(viewModel)
+        }
+        composable("checkout") {
+            val viewModel = hiltViewModel<CheckoutViewModel>()
+            CheckoutScreen(navController, viewModel)
         }
     }
 }

@@ -1,21 +1,33 @@
 package com.herlianzhang.mikropos.ui.customer.customerlist
 
+import android.app.Activity
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
 import com.herlianzhang.mikropos.repository.CustomerRepository
 import com.herlianzhang.mikropos.vo.Customer
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class CustomerListViewModel @Inject constructor(
+class CustomerListViewModel @AssistedInject constructor(
+    @Assisted
+    private val isSelectMode: Boolean,
     private val customerRepository: CustomerRepository
 ) : ViewModel() {
     private val limit: Int = 20
@@ -24,6 +36,10 @@ class CustomerListViewModel @Inject constructor(
     private var isLastPage: Boolean = false
     private var searchJob: Job? = null
     private var fetchJob: Job? = null
+
+    private val _event = Channel<CustomerListEvent>()
+    val event: Flow<CustomerListEvent>
+        get() = _event.receiveAsFlow()
 
     private val _customers = MutableStateFlow(listOf<Customer>())
     val customers: StateFlow<List<Customer>>
@@ -79,6 +95,16 @@ class CustomerListViewModel @Inject constructor(
         }
     }
 
+    fun onClickCustomer(customer: Customer) {
+        viewModelScope.launch {
+            if (isSelectMode) {
+                _event.send(CustomerListEvent.BackWithResult(customer))
+            } else {
+                _event.send(CustomerListEvent.NavigateToCustomerDetail(customer.id))
+            }
+        }
+    }
+
     private fun getCustomers() {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
@@ -114,6 +140,32 @@ class CustomerListViewModel @Inject constructor(
                 _isLoadMore.emit(!isLastPage)
                 _isLoading.emit(false)
             }
+        }
+    }
+
+
+    @AssistedFactory
+    interface Factory {
+        fun create(isSelectMode: Boolean): CustomerListViewModel
+    }
+
+    companion object {
+        private fun providesFactory(
+            assistedFactory: Factory,
+            isSelectMode: Boolean
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(isSelectMode) as T
+            }
+        }
+
+        @Composable
+        fun getViewModel(isSelectMode: Boolean): CustomerListViewModel {
+            val factory = EntryPointAccessors.fromActivity(
+                LocalContext.current as Activity,
+                MainActivity.ViewModelFactoryProvider::class.java
+            ).customerListViewModelFactory()
+            return viewModel(factory = providesFactory(factory, isSelectMode))
         }
     }
 }
