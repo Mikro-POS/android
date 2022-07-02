@@ -32,8 +32,12 @@ import com.herlianzhang.mikropos.ui.register.RegisterScreen
 import com.herlianzhang.mikropos.ui.register.RegisterViewModel
 import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockScreen
 import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
+import com.herlianzhang.mikropos.ui.stock.stockhelp.StockHelpScreen
 import com.herlianzhang.mikropos.ui.stock.stocklist.StockListScreen
 import com.herlianzhang.mikropos.ui.stock.stocklist.StockListViewModel
+import com.herlianzhang.mikropos.ui.transaction.transactiondetail.TransactionDetailScreen
+import com.herlianzhang.mikropos.ui.transaction.transactiondetail.TransactionDetailViewModel
+import com.herlianzhang.mikropos.vo.TransactionItem
 
 @Composable
 fun NavigationComponent(
@@ -162,6 +166,20 @@ fun NavigationComponent(
         composable("checkout") {
             val viewModel = hiltViewModel<CheckoutViewModel>()
             CheckoutScreen(navController, viewModel)
+        }
+        composable(
+            "transaction/{transactionId}",
+            arguments = listOf(navArgument("transactionId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getInt("transactionId")?.let { id ->
+                val viewModel = TransactionDetailViewModel.getViewModel(id)
+                TransactionDetailScreen(navController, viewModel)
+            }
+        }
+        composable("transaction/stock_help") {
+            navController.previousBackStackEntry?.savedStateHandle?.get<List<TransactionItem>>("transactionItems")?.let {
+                StockHelpScreen(navController, it)
+            }
         }
     }
 }

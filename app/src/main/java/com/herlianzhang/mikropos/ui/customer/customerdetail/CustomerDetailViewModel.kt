@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 class CustomerDetailViewModel @AssistedInject constructor(
     @Assisted
     val id: Int,
-    private val CustomerRepository: CustomerRepository,
+    private val customerRepository: CustomerRepository,
     private val imageRepository: ImageRepository,
     app: Application
 ): AndroidViewModel(app) {
@@ -79,7 +79,7 @@ class CustomerDetailViewModel @AssistedInject constructor(
 
     private fun getCustomer() {
         viewModelScope.launch {
-            CustomerRepository.getCustomer(id).collect { result ->
+            customerRepository.getCustomer(id).collect { result ->
                 when(result) {
                     is ApiResult.Loading -> _isLoading.emit(result.state.value)
                     is ApiResult.Success -> _data.emit(result.data)
@@ -97,7 +97,7 @@ class CustomerDetailViewModel @AssistedInject constructor(
     fun updateCustomer(params: Map<String, Any>, fromDialog: Boolean = true) {
         updateJob?.cancel()
         updateJob = viewModelScope.launch {
-            CustomerRepository.updateCustomer(id, params).collect { result ->
+            customerRepository.updateCustomer(id, params).collect { result ->
                 when(result) {
                     is ApiResult.Loading -> {
                         if (fromDialog)
@@ -125,7 +125,7 @@ class CustomerDetailViewModel @AssistedInject constructor(
 
     fun deleteCustomer() {
         viewModelScope.launch {
-            CustomerRepository.deleteCustomer(id).collect { result ->
+            customerRepository.deleteCustomer(id).collect { result ->
                 when(result) {
                     is ApiResult.Loading -> _isLoading.emit(result.state.value)
                     is ApiResult.Success -> {

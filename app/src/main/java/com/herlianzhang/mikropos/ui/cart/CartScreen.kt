@@ -52,7 +52,9 @@ fun CartScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Button(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
                         onClick = { navController.navigate("checkout") }
                     ) {
                         Text("Bayar")

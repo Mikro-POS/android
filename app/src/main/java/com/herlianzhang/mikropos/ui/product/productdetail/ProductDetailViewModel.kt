@@ -14,19 +14,19 @@ import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.ImageRepository
 import com.herlianzhang.mikropos.repository.ProductRepository
-import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
 import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
 import com.herlianzhang.mikropos.vo.ProductDetail
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class ProductDetailViewModel @AssistedInject constructor(
     @Assisted

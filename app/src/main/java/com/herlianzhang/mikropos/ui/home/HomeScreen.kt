@@ -23,6 +23,7 @@ import com.herlianzhang.mikropos.ui.setting.MenuScreen
 import com.herlianzhang.mikropos.ui.cart.CartScreen
 import com.herlianzhang.mikropos.ui.cart.CartViewModel
 import com.herlianzhang.mikropos.ui.transaction.transactionlist.TransactionListScreen
+import com.herlianzhang.mikropos.ui.transaction.transactionlist.TransactionListViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -100,7 +101,8 @@ fun HomeScreen(
                 CartScreen(rootNavController, viewModel)
             }
             composable(Screen.TransactionList.route) {
-                TransactionListScreen()
+                val viewModel = hiltViewModel<TransactionListViewModel>()
+                TransactionListScreen(rootNavController, viewModel)
             }
             composable(Screen.Menu.route) {
                 MenuScreen(rootNavController)

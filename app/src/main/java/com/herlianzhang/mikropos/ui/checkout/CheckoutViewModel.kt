@@ -32,9 +32,9 @@ class CheckoutViewModel @Inject constructor(
         get() = _isLoading
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val totalPrice: Flow<Int>
+    val totalPrice: Flow<Long>
         get() = carts.flatMapLatest {
-            var result = 0
+            var result: Long = 0
             for (cart in it)
                 result += cart.price?.times(cart.amount) ?: 0
             flowOf(result)

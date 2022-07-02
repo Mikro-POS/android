@@ -15,6 +15,7 @@ import com.herlianzhang.mikropos.ui.product.productlist.ProductListViewModel
 import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
 import com.herlianzhang.mikropos.ui.stock.stocklist.StockListViewModel
 import com.herlianzhang.mikropos.ui.theme.MikroPOSTheme
+import com.herlianzhang.mikropos.ui.transaction.transactiondetail.TransactionDetailViewModel
 import com.herlianzhang.mikropos.utils.UserPreferences
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -37,6 +38,7 @@ class MainActivity : ComponentActivity() {
         fun productDetailViewModelFactory(): ProductDetailViewModel.Factory
         fun stockListViewModelFactory(): StockListViewModel.Factory
         fun createStockViewModelFactory(): CreateStockViewModel.Factory
+        fun transactionDetailViewModelFactory(): TransactionDetailViewModel.Factory
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

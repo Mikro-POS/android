@@ -105,9 +105,26 @@ interface ApiService {
     ): Response<Any?>
 
     // transaction
+    @GET("transactions")
+    suspend fun getTransactions(
+        @Query("limit") limit: Int = 10,
+        @Query("page") page: Int = 1
+    ): Response<List<Transaction>>
+
+    @GET("transactions/{transaction_id}")
+    suspend fun getTransaction(
+        @Path("transaction_id") transactionId: Int
+    ): Response<TransactionDetail>
+
     @POST("transactions")
     suspend fun createTransaction(
         @Body data: CreateTransaction
+    ): Response<TransactionDetail>
+
+    @POST("transactions/{transaction_id}/pay-installments")
+    suspend fun payInstallments(
+        @Path("transaction_id") transactionId: Int,
+        @Body data: PayInstallments
     ): Response<TransactionDetail>
 
     // default
