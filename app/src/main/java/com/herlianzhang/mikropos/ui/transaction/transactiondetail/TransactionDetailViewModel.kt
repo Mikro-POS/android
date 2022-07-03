@@ -84,6 +84,18 @@ class TransactionDetailViewModel @AssistedInject constructor(
         }
     }
 
+    fun changeTransactionStatusToLost() {
+        viewModelScope.launch {
+            transactionRepository.changeTransactionStatusToLost(id).collect { result ->
+                when(result) {
+                    is ApiResult.Success -> _data.emit(result.data)
+                    is ApiResult.Loading -> _isLoading.emit(result.state.value)
+                    is ApiResult.Failed -> _event.send(TransactionDetailEvent.ShowErrorSnackbar(result.message))
+                }
+            }
+        }
+    }
+
     fun cancelPayInstallments() {
         viewModelScope.launch {
             _isDialogLoading.emit(false)

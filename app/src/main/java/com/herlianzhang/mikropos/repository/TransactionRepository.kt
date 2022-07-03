@@ -12,8 +12,21 @@ class TransactionRepository @Inject constructor(
 ) {
     fun getTransactions(
         page: Int,
-        limit: Int
-    ) = apiCaller.invoke { apiService.getTransactions(page, limit) }
+        limit: Int,
+        startDate: Long?,
+        endDate: Long?,
+        isBillingPeriod: Boolean,
+        isNotYetPaidOff: Boolean
+    ) = apiCaller.invoke {
+        apiService.getTransactions(
+            page,
+            limit,
+            startDate,
+            endDate,
+            isBillingPeriod,
+            isNotYetPaidOff
+        )
+    }
 
     fun getTransaction(
         id: Int
@@ -27,4 +40,8 @@ class TransactionRepository @Inject constructor(
         id: Int,
         data: PayInstallments
     ) = apiCaller.invoke { apiService.payInstallments(id, data) }
+
+    fun changeTransactionStatusToLost(
+        id: Int
+    ) = apiCaller.invoke { apiService.changeTransactionStatusToLost(id) }
 }

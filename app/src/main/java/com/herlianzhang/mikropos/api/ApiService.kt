@@ -88,7 +88,8 @@ interface ApiService {
         @Path("product_id") productId: Int,
         @Query("limit") limit: Int = 10,
         @Query("page") page: Int = 1,
-        @Query("search") search: String = ""
+        @Query("search") search: String = "",
+
     ): Response<List<Stock>>
 
     @POST("stocks/{product_id}")
@@ -108,7 +109,11 @@ interface ApiService {
     @GET("transactions")
     suspend fun getTransactions(
         @Query("limit") limit: Int = 10,
-        @Query("page") page: Int = 1
+        @Query("page") page: Int = 1,
+        @Query("start_date") startDate: Long? = null,
+        @Query("end_date") endDate: Long? = null,
+        @Query("filter_billing_period") isBillingPeriod: Boolean = false,
+        @Query("filter_not_yet_paid_off") isNotYetPaidOff: Boolean = false
     ): Response<List<Transaction>>
 
     @GET("transactions/{transaction_id}")
@@ -125,6 +130,11 @@ interface ApiService {
     suspend fun payInstallments(
         @Path("transaction_id") transactionId: Int,
         @Body data: PayInstallments
+    ): Response<TransactionDetail>
+
+    @POST("transactions/{transaction_id}/change-to-lost")
+    suspend fun changeTransactionStatusToLost(
+        @Path("transaction_id") transactionId: Int
     ): Response<TransactionDetail>
 
     // default

@@ -70,13 +70,17 @@ fun CheckoutScreen(
     val mDatePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            mCalendar.set(Calendar.HOUR_OF_DAY, 0)
+            mCalendar.set(Calendar.MINUTE, 0)
+            mCalendar.set(Calendar.SECOND, 0)
+            mCalendar.set(Calendar.MILLISECOND, 0)
             mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
             mCalendar.set(Calendar.YEAR, year)
             mCalendar.set(Calendar.MONTH, month)
             dueDate = mCalendar.timeInMillis
         }, mYear, mMonth, mDay
     ).also {  dialog ->
-        dialog.datePicker.minDate = System.currentTimeMillis()
+        dialog.datePicker.minDate = System.currentTimeMillis() + 24*60*60*1000
     }
 
     LaunchedEffect(Unit) {
@@ -87,7 +91,11 @@ fun CheckoutScreen(
                     scaffoldState.snackbarHostState.showSnackbar(message)
                 }
                 is CheckoutEvent.NavigateToDetail -> {
-                    Timber.d("Masuk navigate to detail")
+                    navController.navigate("transaction/${event.id}") {
+                        popUpTo("checkout") {
+                            inclusive = true
+                        }
+                    }
                 }
             }
         }

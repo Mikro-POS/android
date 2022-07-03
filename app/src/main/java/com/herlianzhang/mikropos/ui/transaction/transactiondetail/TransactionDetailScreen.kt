@@ -146,7 +146,12 @@ fun TransactionDetailScreen(
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {  },
+                                .clickable {
+                                    coroutineScope.launch {
+                                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                                        viewModel.changeTransactionStatusToLost()
+                                    }
+                                },
                         )
                     }
                 }
