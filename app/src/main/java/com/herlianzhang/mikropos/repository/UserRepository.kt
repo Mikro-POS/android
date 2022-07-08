@@ -2,6 +2,9 @@ package com.herlianzhang.mikropos.repository
 
 import com.herlianzhang.mikropos.api.ApiCaller
 import com.herlianzhang.mikropos.api.ApiService
+import com.herlianzhang.mikropos.vo.ChangePassword
+import com.herlianzhang.mikropos.vo.Register
+import com.herlianzhang.mikropos.vo.UpdateUser
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,8 +21,18 @@ class UserRepository @Inject constructor(
     }
 
     fun register(
-        params: Map<String, Any>
+        data: Register
     ) = apiCaller {
-        apiService.register(params)
+        apiService.register(data)
     }
+
+    fun getUserInfo() = apiCaller { apiService.getUserInfo() }
+
+    fun updateUser(
+        data: UpdateUser
+    ) = apiCaller { apiService.updateUser(data) }
+
+    fun changePassword(
+        data: ChangePassword
+    ) = apiCaller { apiService.changePassword(data) }
 }

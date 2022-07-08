@@ -10,12 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.herlianzhang.mikropos.ui.customer.customerdetail.CustomerDetailViewModel
 import com.herlianzhang.mikropos.ui.customer.customerlist.CustomerListViewModel
-import com.herlianzhang.mikropos.ui.product.productdetail.ProductDetailViewModel
-import com.herlianzhang.mikropos.ui.product.productlist.ProductListViewModel
-import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
-import com.herlianzhang.mikropos.ui.stock.stocklist.StockListViewModel
+import com.herlianzhang.mikropos.ui.product.product_detail.ProductDetailViewModel
+import com.herlianzhang.mikropos.ui.product.product_list.ProductListViewModel
+import com.herlianzhang.mikropos.ui.stock.create_stock.CreateStockViewModel
+import com.herlianzhang.mikropos.ui.stock.stock_list.StockListViewModel
 import com.herlianzhang.mikropos.ui.theme.MikroPOSTheme
-import com.herlianzhang.mikropos.ui.transaction.transactiondetail.TransactionDetailViewModel
+import com.herlianzhang.mikropos.ui.transaction.transaction_detail.TransactionDetailViewModel
 import com.herlianzhang.mikropos.utils.UserPreferences
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn

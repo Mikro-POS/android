@@ -1,6 +1,8 @@
 package com.herlianzhang.mikropos.vo
 
 data class User(
-    val accessToken: String,
-    val tokenType: String
+    val username: String,
+    val name: String?,
+    val logo: String?,
+    val address: String?
 )

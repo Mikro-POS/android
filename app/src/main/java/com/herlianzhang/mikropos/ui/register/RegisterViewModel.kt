@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.UserRepository
 import com.herlianzhang.mikropos.utils.UserPreferences
+import com.herlianzhang.mikropos.vo.Register
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -33,15 +34,15 @@ class RegisterViewModel @Inject constructor(
         address: String,
         password: String
     ) {
-        val params = mutableMapOf<String, Any>()
-        params["username"] = username
-        params["password"] = password
-        params["name"] = name
-        if (address.isNotBlank())
-            params["address"] = address
+        val data = Register(
+            username = username,
+            name = name,
+            password = password,
+            address = address.ifEmpty { null },
+        )
 
         viewModelScope.launch {
-            userRepository.register(params).collect { result ->
+            userRepository.register(data).collect { result ->
                 when(result) {
                     is ApiResult.Success -> {
                         val accessToken = result.data?.accessToken ?: return@collect

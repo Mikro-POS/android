@@ -7,6 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.herlianzhang.mikropos.ui.change_password.ChangePasswordScreen
+import com.herlianzhang.mikropos.ui.change_password.ChangePasswordViewModel
 import com.herlianzhang.mikropos.ui.checkout.CheckoutScreen
 import com.herlianzhang.mikropos.ui.checkout.CheckoutViewModel
 import com.herlianzhang.mikropos.ui.customer.createcustomer.CreateCustomerScreen
@@ -15,28 +17,36 @@ import com.herlianzhang.mikropos.ui.customer.customerdetail.CustomerDetailScreen
 import com.herlianzhang.mikropos.ui.customer.customerdetail.CustomerDetailViewModel
 import com.herlianzhang.mikropos.ui.customer.customerlist.CustomerListScreen
 import com.herlianzhang.mikropos.ui.customer.customerlist.CustomerListViewModel
+import com.herlianzhang.mikropos.ui.expense.create_expense.CreateExpenseScreen
+import com.herlianzhang.mikropos.ui.expense.create_expense.CreateExpenseViewModel
+import com.herlianzhang.mikropos.ui.expense.create_expense_category.CreateExpenseCategoryScreen
+import com.herlianzhang.mikropos.ui.expense.create_expense_category.CreateExpenseCategoryViewModel
+import com.herlianzhang.mikropos.ui.expense.expense_category.ExpenseCategoryScreen
+import com.herlianzhang.mikropos.ui.expense.expense_category.ExpenseCategoryViewModel
 import com.herlianzhang.mikropos.ui.home.HomeScreen
 import com.herlianzhang.mikropos.ui.home.HomeViewModel
 import com.herlianzhang.mikropos.ui.login.LoginScreen
 import com.herlianzhang.mikropos.ui.login.LoginViewModel
 import com.herlianzhang.mikropos.ui.printer.PrinterListScreen
 import com.herlianzhang.mikropos.ui.printer.PrinterListViewModel
-import com.herlianzhang.mikropos.ui.product.createproduct.CreateProductScreen
-import com.herlianzhang.mikropos.ui.product.createproduct.CreateProductViewModel
-import com.herlianzhang.mikropos.ui.product.productdetail.ProductDetailScreen
-import com.herlianzhang.mikropos.ui.product.productdetail.ProductDetailViewModel
-import com.herlianzhang.mikropos.ui.product.productlist.ProductListScreen
-import com.herlianzhang.mikropos.ui.product.productlist.ProductListViewModel
-import com.herlianzhang.mikropos.ui.qrscan.QrScannerScreen
+import com.herlianzhang.mikropos.ui.product.create_product.CreateProductScreen
+import com.herlianzhang.mikropos.ui.product.create_product.CreateProductViewModel
+import com.herlianzhang.mikropos.ui.product.product_detail.ProductDetailScreen
+import com.herlianzhang.mikropos.ui.product.product_detail.ProductDetailViewModel
+import com.herlianzhang.mikropos.ui.product.product_list.ProductListScreen
+import com.herlianzhang.mikropos.ui.product.product_list.ProductListViewModel
+import com.herlianzhang.mikropos.ui.profile.ProfileScreen
+import com.herlianzhang.mikropos.ui.profile.ProfileViewModel
+import com.herlianzhang.mikropos.ui.qr_scan.QrScannerScreen
 import com.herlianzhang.mikropos.ui.register.RegisterScreen
 import com.herlianzhang.mikropos.ui.register.RegisterViewModel
-import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockScreen
-import com.herlianzhang.mikropos.ui.stock.createstock.CreateStockViewModel
-import com.herlianzhang.mikropos.ui.stock.stockhelp.StockHelpScreen
-import com.herlianzhang.mikropos.ui.stock.stocklist.StockListScreen
-import com.herlianzhang.mikropos.ui.stock.stocklist.StockListViewModel
-import com.herlianzhang.mikropos.ui.transaction.transactiondetail.TransactionDetailScreen
-import com.herlianzhang.mikropos.ui.transaction.transactiondetail.TransactionDetailViewModel
+import com.herlianzhang.mikropos.ui.stock.create_stock.CreateStockScreen
+import com.herlianzhang.mikropos.ui.stock.create_stock.CreateStockViewModel
+import com.herlianzhang.mikropos.ui.stock.stock_help.StockHelpScreen
+import com.herlianzhang.mikropos.ui.stock.stock_list.StockListScreen
+import com.herlianzhang.mikropos.ui.stock.stock_list.StockListViewModel
+import com.herlianzhang.mikropos.ui.transaction.transaction_detail.TransactionDetailScreen
+import com.herlianzhang.mikropos.ui.transaction.transaction_detail.TransactionDetailViewModel
 import com.herlianzhang.mikropos.vo.TransactionItem
 
 @Composable
@@ -180,6 +190,26 @@ fun NavigationComponent(
             navController.previousBackStackEntry?.savedStateHandle?.get<List<TransactionItem>>("transactionItems")?.let {
                 StockHelpScreen(navController, it)
             }
+        }
+        composable("create_expense") {
+            val viewModel = hiltViewModel<CreateExpenseViewModel>()
+            CreateExpenseScreen(navController, viewModel)
+        }
+        composable("expense_categories") {
+            val viewModel = hiltViewModel<ExpenseCategoryViewModel>()
+            ExpenseCategoryScreen(navController, viewModel)
+        }
+        composable("create_expense_category") {
+            val viewModel = hiltViewModel<CreateExpenseCategoryViewModel>()
+            CreateExpenseCategoryScreen(navController, viewModel)
+        }
+        composable("profile") {
+            val viewModel = hiltViewModel<ProfileViewModel>()
+            ProfileScreen(navController, viewModel)
+        }
+        composable("change_password") {
+            val viewModel = hiltViewModel<ChangePasswordViewModel>()
+            ChangePasswordScreen(navController, viewModel)
         }
     }
 }

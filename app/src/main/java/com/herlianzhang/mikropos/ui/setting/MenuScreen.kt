@@ -48,8 +48,12 @@ fun MenuScreen(navController: NavController) {
     ) {
         Spacer(Modifier.height(8.dp))
         Text("Akun")
-        MenuItem(label = "Ubah Profil", icon = Icons.Rounded.AccountCircle) {}
-        MenuItem(label = "Ganti Password", icon = Icons.Rounded.Password) {}
+        MenuItem(label = "Ubah Profil", icon = Icons.Rounded.AccountCircle) {
+            navController.navigate("profile")
+        }
+        MenuItem(label = "Ganti Password", icon = Icons.Rounded.Password) {
+            navController.navigate("change_password")
+        }
         MenuItem(label = "Printer", icon = Icons.Rounded.Print) {
             navController.navigate("printer_list")
         }
@@ -62,6 +66,8 @@ fun MenuScreen(navController: NavController) {
         MenuItem(label = "Kelola Pelanggan", icon = Icons.Rounded.SupervisedUserCircle) {
             navController.navigate("customer_list")
         }
-        MenuItem(label = "Catat Pengeluaran", icon = Icons.Rounded.Paid) {}
+        MenuItem(label = "Catat Pengeluaran", icon = Icons.Rounded.Paid) {
+            navController.navigate("create_expense")
+        }
     }
 }

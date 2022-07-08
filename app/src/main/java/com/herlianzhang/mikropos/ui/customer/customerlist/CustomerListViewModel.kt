@@ -143,7 +143,6 @@ class CustomerListViewModel @AssistedInject constructor(
         }
     }
 
-
     @AssistedFactory
     interface Factory {
         fun create(isSelectMode: Boolean): CustomerListViewModel

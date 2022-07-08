@@ -22,8 +22,8 @@ import com.herlianzhang.mikropos.ui.common.Screen
 import com.herlianzhang.mikropos.ui.setting.MenuScreen
 import com.herlianzhang.mikropos.ui.cart.CartScreen
 import com.herlianzhang.mikropos.ui.cart.CartViewModel
-import com.herlianzhang.mikropos.ui.transaction.transactionlist.TransactionListScreen
-import com.herlianzhang.mikropos.ui.transaction.transactionlist.TransactionListViewModel
+import com.herlianzhang.mikropos.ui.transaction.transaction_list.TransactionListScreen
+import com.herlianzhang.mikropos.ui.transaction.transaction_list.TransactionListViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

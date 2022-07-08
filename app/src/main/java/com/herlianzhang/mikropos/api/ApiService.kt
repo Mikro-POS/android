@@ -12,13 +12,27 @@ interface ApiService {
     suspend fun login(
         @Field("username") username: String,
         @Field("password") password: String
-    ): Response<User>
+    ): Response<Token>
 
     @POST("users/register")
     @JvmSuppressWildcards
     suspend fun register(
-        @Body params: Map<String, Any>
+        @Body data: Register
+    ): Response<Token>
+
+    @GET("users/me")
+    suspend fun getUserInfo(): Response<User>
+
+    @PATCH("users/update")
+    suspend fun updateUser(
+        @Body data: UpdateUser
     ): Response<User>
+
+    @POST("users/change-password")
+    @JvmSuppressWildcards
+    suspend fun changePassword(
+        @Body data: ChangePassword
+    ): Response<Any?>
 
     // customer
     @GET("customers/")
@@ -36,14 +50,14 @@ interface ApiService {
     @POST("customers")
     @JvmSuppressWildcards
     suspend fun createCustomer(
-        @Body params: Map<String, Any>
+        @Body data: CreateOrUpdateCustomer
     ): Response<Customer>
 
     @PATCH("customers/{customer_id}")
     @JvmSuppressWildcards
     suspend fun updateCustomer(
         @Path("customer_id") customerId: Int,
-        @Body params: Map<String, Any>
+        @Body data: CreateOrUpdateCustomer
     ): Response<CustomerDetail>
 
     @DELETE("customers/{customer_id}")
@@ -67,14 +81,14 @@ interface ApiService {
     @POST("products")
     @JvmSuppressWildcards
     suspend fun createProduct(
-        @Body params: Map<String, Any>
+        @Body data: CreateOrUpdateProduct
     ): Response<Product>
 
     @PATCH("products/{product_id}")
     @JvmSuppressWildcards
     suspend fun updateProduct(
         @Path("product_id") productId: Int,
-        @Body params: Map<String, Any>
+        @Body data: CreateOrUpdateProduct
     ): Response<ProductDetail>
 
     @DELETE("products/{product_id}")
@@ -136,6 +150,23 @@ interface ApiService {
     suspend fun changeTransactionStatusToLost(
         @Path("transaction_id") transactionId: Int
     ): Response<TransactionDetail>
+
+    // external expenses
+    @POST("external_expenses")
+    suspend fun createExpense(
+        @Body data: CreateExpense
+    ): Response<Any?>
+
+    @GET("external_expenses/categories")
+    suspend fun getExpenseCategories(
+        @Query("limit") limit: Int = 10,
+        @Query("page") page: Int = 1
+    ): Response<List<ExpenseCategory>>
+
+    @POST("external_expenses/categories")
+    suspend fun createExpenseCategory(
+        @Body data: CreateExpenseCategory
+    ): Response<ExpenseCategory>
 
     // default
     @POST("/upload-image")

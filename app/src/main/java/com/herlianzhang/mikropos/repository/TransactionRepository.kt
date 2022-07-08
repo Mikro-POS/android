@@ -5,7 +5,9 @@ import com.herlianzhang.mikropos.api.ApiService
 import com.herlianzhang.mikropos.vo.CreateTransaction
 import com.herlianzhang.mikropos.vo.PayInstallments
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TransactionRepository @Inject constructor(
     private val apiService: ApiService,
     private val apiCaller: ApiCaller,

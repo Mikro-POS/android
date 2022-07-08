@@ -13,6 +13,7 @@ import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.CustomerRepository
 import com.herlianzhang.mikropos.repository.ImageRepository
 import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
+import com.herlianzhang.mikropos.vo.CreateOrUpdateCustomer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -77,17 +78,15 @@ class CreateCustomerViewModel @Inject constructor(
         phoneNumber2: String,
         address: String
     ) {
-        val params = mutableMapOf<String, Any>()
-        params["name"] = name
-        params["phone_number_1"] = phoneNumber1
-        params["phone_number_2"] = phoneNumber2
-        if (address.isNotBlank())
-            params["address"] = address
-        currUrl?.let { url ->
-            params["photo"] = url
-        }
+        val data = CreateOrUpdateCustomer(
+            name = name,
+            phoneNumber_1 = phoneNumber1.ifEmpty { null },
+            phoneNumber_2 = phoneNumber2.ifEmpty { null },
+            address = address.ifEmpty { null },
+            photo = currUrl?.ifEmpty { null }
+        )
         viewModelScope.launch {
-            customerRepository.createCustomer(params).collect { result ->
+            customerRepository.createCustomer(data).collect { result ->
                 when(result) {
                     is ApiResult.Loading -> _isLoading.emit(result.state.value)
                     is ApiResult.Failed -> _event.send(CreateCustomerEvent.ShowErrorSnackbar(result.message))

@@ -32,7 +32,6 @@ import com.herlianzhang.mikropos.vo.CreateTransactionItem
 import com.herlianzhang.mikropos.vo.Customer
 import com.herlianzhang.mikropos.vo.TransactionStatus
 import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
 import java.util.*
 
 @Composable
@@ -107,6 +106,7 @@ fun CheckoutScreen(
             LaunchedEffect(selected) {
                 selected ?: return@LaunchedEffect
                 selectedCustomer = selected
+                savedState.remove<Customer>("selected_customer")
             }
         }
     }

@@ -15,6 +15,7 @@ import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.CustomerRepository
 import com.herlianzhang.mikropos.repository.ImageRepository
 import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
+import com.herlianzhang.mikropos.vo.CreateOrUpdateCustomer
 import com.herlianzhang.mikropos.vo.CustomerDetail
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -34,7 +35,7 @@ class CustomerDetailViewModel @AssistedInject constructor(
     private val customerRepository: CustomerRepository,
     private val imageRepository: ImageRepository,
     app: Application
-): AndroidViewModel(app) {
+) : AndroidViewModel(app) {
     private var updateJob: Job? = null
     private var uploadJob: Job? = null
 
@@ -94,10 +95,10 @@ class CustomerDetailViewModel @AssistedInject constructor(
         }
     }
 
-    fun updateCustomer(params: Map<String, Any>, fromDialog: Boolean = true) {
+    fun updateCustomer(data: CreateOrUpdateCustomer, fromDialog: Boolean = true) {
         updateJob?.cancel()
         updateJob = viewModelScope.launch {
-            customerRepository.updateCustomer(id, params).collect { result ->
+            customerRepository.updateCustomer(id, data).collect { result ->
                 when(result) {
                     is ApiResult.Loading -> {
                         if (fromDialog)
@@ -147,8 +148,8 @@ class CustomerDetailViewModel @AssistedInject constructor(
                     is ApiResult.Failed -> _event.send(CustomerDetailEvent.ShowErrorSnackbar(result.message))
                     is ApiResult.Success -> {
                         result.data?.url?.let { url ->
-                            val params = mapOf("photo" to url)
-                            updateCustomer(params, false)
+                            val data = CreateOrUpdateCustomer(photo = url)
+                            updateCustomer(data, false)
                         }
                     }
                 }
