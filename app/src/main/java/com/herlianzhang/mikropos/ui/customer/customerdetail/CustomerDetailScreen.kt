@@ -26,8 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.herlianzhang.mikropos.ui.common.*
-import com.herlianzhang.mikropos.vo.CreateOrUpdateCustomer
-import com.herlianzhang.mikropos.vo.CustomerKey
+import com.herlianzhang.mikropos.vo.*
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -40,6 +39,7 @@ fun CustomerDetailScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val isError by viewModel.isError.collectAsState()
     val isNotFound by viewModel.isNotFound.collectAsState()
+    var showAlertConfirmation by remember { mutableStateOf(false) }
     var isShowDialog by rememberSaveable {
         mutableStateOf(false)
     }
@@ -102,7 +102,7 @@ fun CustomerDetailScreen(
                     textAlign = TextAlign.Center
                 )
                 IconButton(
-                    onClick = { viewModel.deleteCustomer() },
+                    onClick = { showAlertConfirmation = true },
                     enabled = !isLoading && data != null
                 ) {
                     Icon(Icons.Rounded.Delete, contentDescription = null)
@@ -215,6 +215,13 @@ fun CustomerDetailScreen(
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }
             NotFoundView(isNotFound)
+            AlertConfirmation(
+                showDialog = showAlertConfirmation,
+                title = "Hapus",
+                message = "Apakah anda yakin ingin menghapus Pelanggan ini?",
+                onConfirm = { viewModel.deleteCustomer() },
+                onDismiss = { showAlertConfirmation = false }
+            )
         }
     }
 }

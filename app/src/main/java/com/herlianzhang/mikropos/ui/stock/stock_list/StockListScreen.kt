@@ -8,10 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +29,7 @@ fun StockListScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val isLoadMore by viewModel.isLoadMore.collectAsState()
     val isError by viewModel.isError.collectAsState()
+    var showAlertConfirmation by remember { mutableStateOf(Pair(false, -1)) }
     val scaffoldState = rememberScaffoldState()
 
     navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
@@ -111,7 +109,7 @@ fun StockListScreen(
                             viewModel.printStock(item)
                         },
                         onDeleteClick = {
-                            viewModel.deleteStock(item.id)
+                            showAlertConfirmation = Pair(true, item.id)
                         }
                     )
                 }
@@ -136,6 +134,13 @@ fun StockListScreen(
             ) {
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }
+            AlertConfirmation(
+                showDialog = showAlertConfirmation.first,
+                title = "Hapus",
+                message = "Apakah anda yakin ingin menghapus Persediaan ini?",
+                onConfirm = { viewModel.deleteStock(showAlertConfirmation.second) },
+                onDismiss = { showAlertConfirmation = Pair(false, -1) }
+            )
         }
     }
 }

@@ -1,13 +1,12 @@
 package com.herlianzhang.mikropos.ui.home
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -21,6 +20,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.herlianzhang.mikropos.ui.cart.CartScreen
 import com.herlianzhang.mikropos.ui.cart.CartViewModel
+import com.herlianzhang.mikropos.ui.common.AlertConfirmation
 import com.herlianzhang.mikropos.ui.common.Screen
 import com.herlianzhang.mikropos.ui.setting.MenuScreen
 import com.herlianzhang.mikropos.ui.transaction.transaction_list.TransactionListScreen
@@ -42,6 +42,7 @@ fun HomeScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = navBackStackEntry?.destination?.route
+    var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = Unit) {
         viewModel.event.collectLatest { event ->
@@ -69,7 +70,13 @@ fun HomeScreen(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
-                HomeAction(currentRoute, viewModel)
+                HomeAction(
+                    currentRoute,
+                    viewModel,
+                    onLogout = {
+                        showDialog = true
+                    }
+                )
             }
         },
         bottomBar = {
@@ -93,22 +100,31 @@ fun HomeScreen(
             }
         }
     ) { innerPadding ->
-        AnimatedNavHost(
-            navController,
-            startDestination = items.first().route,
-            Modifier.padding(innerPadding)
-        ) {
-            composable(Screen.Cart.route) {
-                val viewModel = hiltViewModel<CartViewModel>()
-                CartScreen(rootNavController, viewModel)
+        Box {
+            AnimatedNavHost(
+                navController,
+                startDestination = items.first().route,
+                Modifier.padding(innerPadding)
+            ) {
+                composable(Screen.Cart.route) {
+                    val viewModel = hiltViewModel<CartViewModel>()
+                    CartScreen(rootNavController, viewModel)
+                }
+                composable(Screen.TransactionList.route) {
+                    val viewModel = hiltViewModel<TransactionListViewModel>()
+                    TransactionListScreen(rootNavController, viewModel)
+                }
+                composable(Screen.Menu.route) {
+                    MenuScreen(rootNavController)
+                }
             }
-            composable(Screen.TransactionList.route) {
-                val viewModel = hiltViewModel<TransactionListViewModel>()
-                TransactionListScreen(rootNavController, viewModel)
-            }
-            composable(Screen.Menu.route) {
-                MenuScreen(rootNavController)
-            }
+            AlertConfirmation(
+                showDialog = showDialog,
+                title = "Logout",
+                message = "Apakah anda yakin ingin melakuan logout?",
+                onConfirm = { viewModel.logout() },
+                onDismiss = { showDialog = false }
+            )
         }
     }
 }

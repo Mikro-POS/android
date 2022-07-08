@@ -41,6 +41,7 @@ fun ProductDetailScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val isError by viewModel.isError.collectAsState()
     val isNotFound by viewModel.isNotFound.collectAsState()
+    var showAlertConfirmation by remember { mutableStateOf(false) }
     var isShowDialog by rememberSaveable {
         mutableStateOf(false)
     }
@@ -126,7 +127,7 @@ fun ProductDetailScreen(
                     textAlign = TextAlign.Center
                 )
                 IconButton(
-                    onClick = { viewModel.deleteProduct() },
+                    onClick = { showAlertConfirmation = true },
                     enabled = !isLoading && data != null
                 ) {
                     Icon(Icons.Rounded.Delete, contentDescription = null)
@@ -235,6 +236,13 @@ fun ProductDetailScreen(
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }
             NotFoundView(isNotFound)
+            AlertConfirmation(
+                showDialog = showAlertConfirmation,
+                title = "Hapus",
+                message = "Apakah anda yakin ingin menghapus Produk ini?",
+                onConfirm = { viewModel.deleteProduct() },
+                onDismiss = { showAlertConfirmation = false }
+            )
         }
     }
 }

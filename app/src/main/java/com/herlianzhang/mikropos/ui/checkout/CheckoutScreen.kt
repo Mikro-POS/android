@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.herlianzhang.mikropos.ui.common.AlertConfirmation
 import com.herlianzhang.mikropos.ui.common.DefaultSnackbar
 import com.herlianzhang.mikropos.ui.common.DropDown
 import com.herlianzhang.mikropos.ui.common.LoadingView
@@ -45,6 +46,7 @@ fun CheckoutScreen(
     val totalPrice = viewModel.totalPrice.collectAsState(0)
     val isLoading by viewModel.isLoading.collectAsState()
     val scaffoldState = rememberScaffoldState()
+    var showAlertConfirmation by remember { mutableStateOf(false) }
     var checkedState by rememberSaveable {
         mutableStateOf(true)
     }
@@ -246,16 +248,7 @@ fun CheckoutScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = selectedCustomer != null && (!checkedState || (dueDate != null && totalInstallment != null)),
-                    onClick = {
-                        val data = CreateTransaction(
-                            customerId = selectedCustomer?.id,
-                            status = if (checkedState) TransactionStatus.DEBT else TransactionStatus.COMPLETED,
-                            totalInstallment = totalInstallment,
-                            debtDue = dueDate,
-                            items = carts.value.map { CreateTransactionItem(it.id, it.amount) }
-                        )
-                        viewModel.createTransaction(data)
-                    }
+                    onClick = { showAlertConfirmation = true }
                 ) {
                     Text(totalPrice.value.toRupiah())
                 }
@@ -267,6 +260,22 @@ fun CheckoutScreen(
             ) {
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }
+            AlertConfirmation(
+                showDialog = showAlertConfirmation,
+                title = "Konfirmasi Pembayaran",
+                message = "Apakah anda yakin ingin melanjutkan transaksi ini?\ntransaksi yang sudah dibuat tidak dapat dihapus lagi!",
+                onConfirm = {
+                    val data = CreateTransaction(
+                        customerId = selectedCustomer?.id,
+                        status = if (checkedState) TransactionStatus.DEBT else TransactionStatus.COMPLETED,
+                        totalInstallment = totalInstallment,
+                        debtDue = dueDate,
+                        items = carts.value.map { CreateTransactionItem(it.id, it.amount) }
+                    )
+                    viewModel.createTransaction(data)
+                },
+                onDismiss = { showAlertConfirmation = false }
+            )
         }
     }
 }

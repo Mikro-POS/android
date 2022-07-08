@@ -15,7 +15,7 @@ import javax.inject.Inject
 class ApiCaller @Inject constructor(
     private val gson: Gson
 ) {
-    operator fun <T> invoke(call: suspend () -> Response<T>) = flow<ApiResult<T>> {
+    operator fun <T> invoke(call: suspend () -> Response<T>) = flow {
         try {
             val response = call()
             if (response.isSuccessful) {

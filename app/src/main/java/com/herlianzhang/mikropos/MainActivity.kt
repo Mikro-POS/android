@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
         fun transactionDetailViewModelFactory(): TransactionDetailViewModel.Factory
     }
 
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
