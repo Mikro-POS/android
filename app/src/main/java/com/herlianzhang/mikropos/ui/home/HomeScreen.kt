@@ -1,5 +1,6 @@
 package com.herlianzhang.mikropos.ui.home
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -14,18 +15,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.herlianzhang.mikropos.ui.common.Screen
-import com.herlianzhang.mikropos.ui.setting.MenuScreen
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.herlianzhang.mikropos.ui.cart.CartScreen
 import com.herlianzhang.mikropos.ui.cart.CartViewModel
+import com.herlianzhang.mikropos.ui.common.Screen
+import com.herlianzhang.mikropos.ui.setting.MenuScreen
 import com.herlianzhang.mikropos.ui.transaction.transaction_list.TransactionListScreen
 import com.herlianzhang.mikropos.ui.transaction.transaction_list.TransactionListViewModel
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeScreen(
     rootNavController: NavController,
@@ -36,7 +38,7 @@ fun HomeScreen(
         Screen.TransactionList,
         Screen.Menu
     )
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = navBackStackEntry?.destination?.route
@@ -91,7 +93,7 @@ fun HomeScreen(
             }
         }
     ) { innerPadding ->
-        NavHost(
+        AnimatedNavHost(
             navController,
             startDestination = items.first().route,
             Modifier.padding(innerPadding)

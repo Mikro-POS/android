@@ -1,12 +1,15 @@
 package com.herlianzhang.mikropos
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.navArgument
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.herlianzhang.mikropos.ui.change_password.ChangePasswordScreen
 import com.herlianzhang.mikropos.ui.change_password.ChangePasswordViewModel
 import com.herlianzhang.mikropos.ui.checkout.CheckoutScreen
@@ -49,15 +52,19 @@ import com.herlianzhang.mikropos.ui.transaction.transaction_detail.TransactionDe
 import com.herlianzhang.mikropos.ui.transaction.transaction_detail.TransactionDetailViewModel
 import com.herlianzhang.mikropos.vo.TransactionItem
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationComponent(
-    navController: NavHostController,
     isAuthenticated: Boolean
 ) {
-    NavHost(
+    val navController = rememberAnimatedNavController()
+    AnimatedNavHost(
         navController = navController,
-        startDestination = if (isAuthenticated) "home" else "login"
-//        startDestination = "checkout"
+        startDestination = if (isAuthenticated) "home" else "login",
+        enterTransition = { slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(200))},
+        popEnterTransition = { slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(200))},
+        exitTransition = { slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(200))},
+        popExitTransition = { slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(200))},
     ) {
         composable("login") {
             val viewModel = hiltViewModel<LoginViewModel>()
