@@ -8,7 +8,9 @@ import com.herlianzhang.mikropos.api.InputStreamRequestBody
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.MultipartBody
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ImageRepository @Inject constructor(
     private val apiService: ApiService,
     private val apiCaller: ApiCaller,

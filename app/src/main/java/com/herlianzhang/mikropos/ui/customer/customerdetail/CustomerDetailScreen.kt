@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.herlianzhang.mikropos.ui.common.*
+import com.herlianzhang.mikropos.vo.*
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -38,6 +39,7 @@ fun CustomerDetailScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val isError by viewModel.isError.collectAsState()
     val isNotFound by viewModel.isNotFound.collectAsState()
+    var showAlertConfirmation by remember { mutableStateOf(false) }
     var isShowDialog by rememberSaveable {
         mutableStateOf(false)
     }
@@ -100,7 +102,7 @@ fun CustomerDetailScreen(
                     textAlign = TextAlign.Center
                 )
                 IconButton(
-                    onClick = { viewModel.deleteCustomer() },
+                    onClick = { showAlertConfirmation = true },
                     enabled = !isLoading && data != null
                 ) {
                     Icon(Icons.Rounded.Delete, contentDescription = null)
@@ -154,28 +156,28 @@ fun CustomerDetailScreen(
                     }
 
                     DetailItem(key = "Nama", value = data.name) {
-                        dialogKey = "name"
+                        dialogKey = CustomerKey.NAME.getValue()
                         dialogValue = data.name ?: ""
                         dialogTitle = "Ubah Nama"
                         dialogType = EditDialogType.Default
                         isShowDialog = true
                     }
                     DetailItem(key = "Nomor Telepon 1", value = data.phoneNumber) {
-                        dialogKey = "phone_number_1"
+                        dialogKey = CustomerKey.PHONE_NUMBER_1.getValue()
                         dialogValue = data.phoneNumber ?: ""
                         dialogTitle = "Ubah Nomor Telepon 1"
                         dialogType = EditDialogType.Default
                         isShowDialog = true
                     }
                     DetailItem(key = "Nomor Telepon 2", value = data.phoneNumber2) {
-                        dialogKey = "phone_number_2"
+                        dialogKey = CustomerKey.PHONE_NUMBER_2.getValue()
                         dialogValue = data.phoneNumber2 ?: ""
                         dialogTitle = "Ubah Nomor Telepon 2"
                         dialogType = EditDialogType.Default
                         isShowDialog = true
                     }
                     DetailItem(key = "Alamat", value = data.address) {
-                        dialogKey = "address"
+                        dialogKey = CustomerKey.ADDRESS.getValue()
                         dialogValue = data.address ?: ""
                         dialogTitle = "Ubah Alamat"
                         dialogType = EditDialogType.Default
@@ -198,9 +200,12 @@ fun CustomerDetailScreen(
                     isShowDialog = false
                 },
                 onSubmit = {
-                    val params = mutableMapOf<String, Any>()
-                    params[dialogKey] = dialogValue
-                    viewModel.updateCustomer(params)
+                    viewModel.updateCustomer(
+                        CreateOrUpdateCustomer.update(
+                            key = CustomerKey.fromKey(dialogKey),
+                            value = dialogValue
+                        )
+                    )
                 }
             )
             DefaultSnackbar(
@@ -210,6 +215,13 @@ fun CustomerDetailScreen(
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }
             NotFoundView(isNotFound)
+            AlertConfirmation(
+                showDialog = showAlertConfirmation,
+                title = "Hapus",
+                message = "Apakah anda yakin ingin menghapus Pelanggan ini?",
+                onConfirm = { viewModel.deleteCustomer() },
+                onDismiss = { showAlertConfirmation = false }
+            )
         }
     }
 }

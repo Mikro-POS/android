@@ -6,7 +6,7 @@ data class Stock(
     val supplierName: String?,
     val amount: Int?,
     val soldAmount: Int?,
-    val purchasePrice: Int?,
+    val purchasePrice: Long?,
     val source: StockSource?,
     val supplier: Supplier?,
     val createdAt: Long?,

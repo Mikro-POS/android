@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.herlianzhang.mikropos.ui.common.*
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -50,6 +51,23 @@ fun CustomerListScreen(
                 newData ?: return@LaunchedEffect
                 viewModel.search(search, false)
                 savedState.remove<Boolean>("refresh_customers")
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collectLatest { event ->
+            when (event) {
+                is CustomerListEvent.NavigateToCustomerDetail -> {
+                    navController.navigate("customer_detail/${event.id}")
+                }
+                is CustomerListEvent.BackWithResult -> {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "selected_customer",
+                        event.customer
+                    )
+                    navController.popBackStack()
+                }
             }
         }
     }
@@ -122,7 +140,7 @@ fun CustomerListScreen(
                             item.phoneNumber,
                             Modifier.animateItemPlacement(),
                             onClicked = {
-                                navController.navigate("customer_detail/${item.id}")
+                                viewModel.onClickCustomer(item)
                             }
                         )
                     }

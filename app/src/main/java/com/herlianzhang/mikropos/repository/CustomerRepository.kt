@@ -2,6 +2,7 @@ package com.herlianzhang.mikropos.repository
 
 import com.herlianzhang.mikropos.api.ApiCaller
 import com.herlianzhang.mikropos.api.ApiService
+import com.herlianzhang.mikropos.vo.CreateOrUpdateCustomer
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,16 +25,16 @@ class CustomerRepository @Inject constructor(
     }
 
     fun createCustomer(
-        params: Map<String, Any>
+        data: CreateOrUpdateCustomer
     ) = apiCaller {
-        apiService.createCustomer(params)
+        apiService.createCustomer(data)
     }
 
     fun updateCustomer(
         id: Int,
-        params: Map<String, Any>
+        data: CreateOrUpdateCustomer
     ) = apiCaller {
-        apiService.updateCustomer(id, params)
+        apiService.updateCustomer(id, data)
     }
 
     fun deleteCustomer(

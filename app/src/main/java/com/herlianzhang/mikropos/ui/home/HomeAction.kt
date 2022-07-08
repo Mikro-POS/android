@@ -10,11 +10,11 @@ import androidx.compose.runtime.Composable
 import com.herlianzhang.mikropos.ui.common.Screen
 
 @Composable
-fun HomeAction(route: String?, viewModel: HomeViewModel) {
+fun HomeAction(route: String?, viewModel: HomeViewModel, onLogout: () -> Unit) {
     when (route) {
         Screen.Cart.route -> {
             IconButton(onClick = {
-                throw RuntimeException("percobaan ke dua")
+                viewModel.navigateToSelectProduct()
             }) {
                 Icon(Icons.Rounded.Add, contentDescription = null)
             }
@@ -25,9 +25,7 @@ fun HomeAction(route: String?, viewModel: HomeViewModel) {
             }
         }
         Screen.Menu.route -> {
-            IconButton(onClick = {
-                viewModel.logout()
-            }) {
+            IconButton(onClick = { onLogout() }) {
                 Icon(Icons.Rounded.Logout, contentDescription = null)
             }
         }
