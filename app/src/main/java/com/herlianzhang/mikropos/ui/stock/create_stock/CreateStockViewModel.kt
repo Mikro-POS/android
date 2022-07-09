@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.gson.Gson
 import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.StockRepository
+import com.herlianzhang.mikropos.vo.ProductDetail
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -20,14 +22,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class CreateStockViewModel @AssistedInject constructor(
-    @Assisted
-    private val productId: Int,
-    private val stockRepository: StockRepository
+    @Assisted private val productJSON: String,
+    private val stockRepository: StockRepository,
+    gson: Gson
 ): ViewModel() {
-
+    private val product = gson.fromJson(productJSON, ProductDetail::class.java)
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean>
         get() = _isLoading
@@ -36,9 +37,6 @@ class CreateStockViewModel @AssistedInject constructor(
     val event: Flow<CreateStockEvent>
         get() = _event.receiveAsFlow()
 
-    init {
-        Timber.d("masuk productId $productId")
-    }
 
     fun createStock(
         supplierName: String,
@@ -52,7 +50,7 @@ class CreateStockViewModel @AssistedInject constructor(
         params["purchase_price"] = price
         params["source"] = if (isRefund) "CUSTOMER" else "SUPPLIER"
         viewModelScope.launch {
-            stockRepository.createStock(productId, params).collect { result ->
+            stockRepository.createStock(product.id, params).collect { result ->
                 when(result) {
                     is ApiResult.Loading -> _isLoading.emit(result.state.value)
                     is ApiResult.Failed -> _event.send(CreateStockEvent.ShowErrorSnackbar(result.message))
@@ -62,28 +60,36 @@ class CreateStockViewModel @AssistedInject constructor(
         }
     }
 
+    fun shouldShowWarning(price: Long): Boolean {
+        val sellingPrice = product.price
+        if (sellingPrice != null) {
+            return price > sellingPrice
+        }
+        return false
+    }
+
     @AssistedFactory
     interface Factory {
-        fun create(productId: Int): CreateStockViewModel
+        fun create(productJSON: String): CreateStockViewModel
     }
 
     companion object {
         private fun providesFactory(
             assistedFactory: Factory,
-            productId: Int
+            productJSON: String
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(productId) as T
+                return assistedFactory.create(productJSON) as T
             }
         }
 
         @Composable
-        fun getViewModel(productId: Int):CreateStockViewModel {
+        fun getViewModel(productJSON: String):CreateStockViewModel {
             val factory = EntryPointAccessors.fromActivity(
                 LocalContext.current as Activity,
                 MainActivity.ViewModelFactoryProvider::class.java
             ).createStockViewModelFactory()
-            return viewModel(factory = providesFactory(factory, productId))
+            return viewModel(factory = providesFactory(factory, productJSON))
         }
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.herlianzhang.mikropos.ui.common.AlertConfirmation
 import com.herlianzhang.mikropos.ui.common.DefaultSnackbar
 import com.herlianzhang.mikropos.ui.common.LoadingView
 import com.herlianzhang.mikropos.utils.CurrencyVisualTransformation
@@ -35,6 +36,7 @@ fun CreateStockScreen(
     val scaffoldState = rememberScaffoldState()
     val isLoading by viewModel.isLoading.collectAsState()
     val localFocusManager = LocalFocusManager.current
+    var showAlertConfirmation by remember { mutableStateOf(false) }
     val checkedState = remember {
         mutableStateOf(false)
     }
@@ -46,6 +48,19 @@ fun CreateStockScreen(
     }
     var amount by rememberSaveable {
         mutableStateOf("")
+    }
+
+    fun createStock(withChecking: Boolean = true) {
+        if (withChecking && viewModel.shouldShowWarning(price.toLong())) {
+            showAlertConfirmation = true
+            return
+        }
+        viewModel.createStock(
+            supplierName,
+            amount.toLong(),
+            price.toLong(),
+            checkedState.value
+        )
     }
 
     LaunchedEffect(Unit) {
@@ -83,12 +98,7 @@ fun CreateStockScreen(
                 )
                 IconButton(
                     onClick = {
-                        viewModel.createStock(
-                            supplierName,
-                            amount.toLong(),
-                            price.toLong(),
-                            checkedState.value
-                        )
+                        createStock()
                     },
                     enabled = amount.toLongOrNull() != null && price.toLongOrNull() != null
                 ) {
@@ -173,12 +183,7 @@ fun CreateStockScreen(
                        onDone = {
                            localFocusManager.clearFocus()
                            if (amount.toLongOrNull() != null && price.toLongOrNull() != null) {
-                               viewModel.createStock(
-                                   supplierName,
-                                   amount.toLong(),
-                                   price.toLong(),
-                                   checkedState.value
-                               )
+                               createStock()
                            }
                        }
                    ),
@@ -194,6 +199,13 @@ fun CreateStockScreen(
             ) {
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }
+            AlertConfirmation(
+                showDialog = showAlertConfirmation,
+                title = "Catat Persediaan",
+                message = "Harga Pembelian lebih tinggi daripada harga Jual.\nApakah anda yakin ingin lanjut mencatat persediaan ini?",
+                onConfirm = { createStock(false) },
+                onDismiss = { showAlertConfirmation = false }
+            )
         }
     }
 }

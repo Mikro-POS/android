@@ -80,7 +80,7 @@ fun StockListScreen(
                     textAlign = TextAlign.Center
                 )
                 IconButton(onClick = {
-                    navController.navigate("create_stock/${viewModel.productId}")
+                    navController.navigate("create_stock/${viewModel.getProductJSON()}")
                 }) {
                     Icon(Icons.Rounded.Add, contentDescription = null)
                 }
