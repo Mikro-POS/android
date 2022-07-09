@@ -37,8 +37,6 @@ import androidx.navigation.NavController
 import com.herlianzhang.mikropos.ui.common.DefaultSnackbar
 import com.herlianzhang.mikropos.ui.common.LoadingView
 import com.herlianzhang.mikropos.ui.common.UploadImageLoadingView
-import com.herlianzhang.mikropos.utils.CurrencyVisualTransformation
-import com.herlianzhang.mikropos.utils.extensions.inputCurrency
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -48,9 +46,6 @@ fun CreateProductScreen(
 ) {
     val localFocusManager = LocalFocusManager.current
     var name by rememberSaveable {
-        mutableStateOf("")
-    }
-    var price by rememberSaveable {
         mutableStateOf("")
     }
     var sku by rememberSaveable {
@@ -84,12 +79,19 @@ fun CreateProductScreen(
                     val message = event.message ?: return@collectLatest
                     scaffoldState.snackbarHostState.showSnackbar(message)
                 }
-                is CreateProductEvent.BackWithResult -> {
+                is CreateProductEvent.NavigateToDetail -> {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         "refresh_products",
                         true
                     )
-                    navController.popBackStack()
+                    if (event.id == null)
+                        navController.popBackStack()
+                    else
+                        navController.navigate("product_detail/${event.id}") {
+                            popUpTo("create_product") {
+                                inclusive = true
+                            }
+                        }
                 }
             }
         }
@@ -114,11 +116,10 @@ fun CreateProductScreen(
                     onClick = {
                         viewModel.createProduct(
                             name,
-                            price.toLong(),
                             sku
                         )
                     },
-                    enabled = name.isNotBlank() && price.toLongOrNull() != null
+                    enabled = name.isNotBlank()
                 ) {
                     Icon(Icons.Rounded.Done, contentDescription = null)
                 }
@@ -176,27 +177,6 @@ fun CreateProductScreen(
                     onValueChange = { name = it }
                 )
 
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = price,
-                    shape = RoundedCornerShape(12.dp),
-                    label = {
-                        Text("Harga")
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                        keyboardType = KeyboardType.NumberPassword
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
-                    ),
-                    onValueChange = {
-                        price = it.inputCurrency()
-                    },
-                    visualTransformation = CurrencyVisualTransformation()
-                )
-
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -216,10 +196,9 @@ fun CreateProductScreen(
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 localFocusManager.clearFocus()
-                                if (name.isNotBlank() && price.toLongOrNull() != null)
+                                if (name.isNotBlank())
                                     viewModel.createProduct(
                                         name,
-                                        price.toLong(),
                                         sku
                                     )
                             }

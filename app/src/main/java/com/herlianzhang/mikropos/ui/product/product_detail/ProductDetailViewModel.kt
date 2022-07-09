@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.gson.Gson
 import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.ImageRepository
@@ -34,6 +35,7 @@ class ProductDetailViewModel @AssistedInject constructor(
     val id: Int,
     private val productRepository: ProductRepository,
     private val imageRepository: ImageRepository,
+    private val gson: Gson,
     app: Application
 ): AndroidViewModel(app) {
     private var updateJob: Job? = null
@@ -156,6 +158,8 @@ class ProductDetailViewModel @AssistedInject constructor(
             }
         }
     }
+
+    fun getProductJSON() = gson.toJson(_data.value ?: "").toString()
 
     @AssistedFactory
     interface Factory {

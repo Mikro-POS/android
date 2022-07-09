@@ -187,10 +187,10 @@ fun ProductDetailScreen(
                         dialogType = EditDialogType.Default
                         isShowDialog = true
                     }
-                    DetailItem(key = "Harga", value = data.price?.toRupiah()) {
+                    DetailItem(key = "Harga Jual", value = data.price?.toRupiah()) {
                         dialogKey = ProductKey.PRICE.getValue()
                         dialogValue = data.price?.toString() ?: ""
-                        dialogTitle = "Ubah Harga"
+                        dialogTitle = "Ubah Harga Jual"
                         dialogType = EditDialogType.Currency
                         isShowDialog = true
                     }
@@ -202,7 +202,7 @@ fun ProductDetailScreen(
                         isShowDialog = true
                     }
                     DetailItem(key = "Total Stok", value = data.totalStock?.toString()) {
-                        navController.navigate("stock_list/${viewModel.id}")
+                        navController.navigate("stock_list/${viewModel.getProductJSON()}")
                     }
                 }
             }

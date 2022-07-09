@@ -6,9 +6,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
-import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.herlianzhang.mikropos.ui.change_password.ChangePasswordScreen
 import com.herlianzhang.mikropos.ui.change_password.ChangePasswordViewModel
@@ -156,20 +156,20 @@ fun NavigationComponent(
             }
         }
         composable(
-            "stock_list/{productId}",
-            arguments = listOf(navArgument("productId") { type = NavType.IntType })
+            "stock_list/{product}",
+            arguments = listOf(navArgument("product") { type = NavType.StringType })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getInt("productId")?.let { productId ->
-                val viewModel = StockListViewModel.getViewModel(productId)
+            backStackEntry.arguments?.getString("product")?.let { product ->
+                val viewModel = StockListViewModel.getViewModel(product)
                 StockListScreen(navController, viewModel)
             }
         }
         composable(
-            "create_stock/{productId}",
-            arguments = listOf(navArgument("productId") { type = NavType.IntType })
+            "create_stock/{product}",
+            arguments = listOf(navArgument("product") { type = NavType.StringType })
         ) { backStackEntry ->
-            backStackEntry.arguments?.getInt("productId")?.let { productId ->
-                val viewModel = CreateStockViewModel.getViewModel(productId)
+            backStackEntry.arguments?.getString("product")?.let { product ->
+                val viewModel = CreateStockViewModel.getViewModel(product)
                 CreateStockScreen(navController, viewModel)
             }
         }

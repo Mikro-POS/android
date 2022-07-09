@@ -74,12 +74,10 @@ class CreateProductViewModel @Inject constructor(
 
     fun createProduct(
         name: String,
-        price: Long,
         sku: String
     ) {
         val data = CreateOrUpdateProduct(
             name = name,
-            price = price,
             sku = sku.ifEmpty { null },
             photo = currUrl?.ifEmpty { null }
         )
@@ -88,7 +86,7 @@ class CreateProductViewModel @Inject constructor(
                 when(result) {
                     is ApiResult.Loading -> _isLoading.emit(result.state.value)
                     is ApiResult.Failed -> _event.send(CreateProductEvent.ShowErrorSnackbar(result.message))
-                    is ApiResult.Success -> _event.send(CreateProductEvent.BackWithResult)
+                    is ApiResult.Success -> _event.send(CreateProductEvent.NavigateToDetail(result.data?.id))
                 }
             }
         }

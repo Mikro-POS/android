@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.gson.Gson
 import com.herlianzhang.mikropos.MainActivity
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
@@ -15,6 +16,8 @@ import com.herlianzhang.mikropos.utils.UserPreferences
 import com.herlianzhang.mikropos.utils.extensions.formatDate
 import com.herlianzhang.mikropos.utils.extensions.getPrinter
 import com.herlianzhang.mikropos.utils.extensions.printFormattedText
+import com.herlianzhang.mikropos.vo.Product
+import com.herlianzhang.mikropos.vo.ProductDetail
 import com.herlianzhang.mikropos.vo.Stock
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -30,14 +33,16 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class StockListViewModel @AssistedInject constructor(
-    @Assisted val productId: Int,
+    @Assisted private val productJSON: String,
     private val stockRepository: StockRepository,
-    private val userPref: UserPreferences
+    private val userPref: UserPreferences,
+    gson: Gson
 ) : ViewModel() {
     private val limit: Int = 20
     private var page: Int = 1
     private var isLastPage: Boolean = false
     private var fetchJob: Job? = null
+    private val product = gson.fromJson(productJSON, ProductDetail::class.java)
 
     private val _stocks = MutableStateFlow(listOf<Stock>())
     val stocks: StateFlow<List<Stock>>
@@ -106,6 +111,8 @@ class StockListViewModel @AssistedInject constructor(
         }
     }
 
+    fun getProductJSON() = productJSON
+
     suspend fun refresh() {
         page = 1
         isLastPage = false
@@ -116,7 +123,7 @@ class StockListViewModel @AssistedInject constructor(
     private fun getStocks() {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
-            stockRepository.getStocks(productId, page, limit).collect { result ->
+            stockRepository.getStocks(product.id, page, limit).collect { result ->
                 when (result) {
                     is ApiResult.Success -> handleSuccess(result.data ?: emptyList())
                     is ApiResult.Failed -> handleError()
@@ -128,7 +135,7 @@ class StockListViewModel @AssistedInject constructor(
 
     fun deleteStock(stockId: Int) {
         viewModelScope.launch {
-            stockRepository.deleteStock(productId, stockId).collect { result ->
+            stockRepository.deleteStock(product.id, stockId).collect { result ->
                 when (result) {
                     is ApiResult.Success -> {
                         refresh()
@@ -168,26 +175,26 @@ class StockListViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(productId: Int): StockListViewModel
+        fun create(productJSON: String): StockListViewModel
     }
 
     companion object {
         private fun providesFactory(
             assistedFactory: Factory,
-            productId: Int
+            productJSON: String
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(productId) as T
+                return assistedFactory.create(productJSON) as T
             }
         }
 
         @Composable
-        fun getViewModel(productId: Int): StockListViewModel {
+        fun getViewModel(productJSON: String): StockListViewModel {
             val factory = EntryPointAccessors.fromActivity(
                 LocalContext.current as Activity,
                 MainActivity.ViewModelFactoryProvider::class.java
             ).stockListViewModelFactory()
-            return viewModel(factory = providesFactory(factory, productId))
+            return viewModel(factory = providesFactory(factory, productJSON))
         }
     }
 }
