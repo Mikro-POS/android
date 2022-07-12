@@ -161,6 +161,17 @@ fun CheckoutScreen(
                                 )
                             }
 
+                            Spacer(Modifier.height(4.dp))
+
+                            Text("Nama Pelanggan")
+
+                            DropDown(
+                                selectedCustomer?.name ?: "Pilih Pelanggan",
+                                selectedCustomer != null
+                            ) {
+                                navController.navigate("select_customer")
+                            }
+
                             if (checkedState) {
                                 Spacer(Modifier.height(4.dp))
 
@@ -221,17 +232,6 @@ fun CheckoutScreen(
                                         }
                                     }
                                 }
-                            }
-
-                            Spacer(Modifier.height(4.dp))
-
-                            Text("Nama Pelanggan")
-
-                            DropDown(
-                                selectedCustomer?.name ?: "Pilih Pelanggan",
-                                selectedCustomer != null
-                            ) {
-                                navController.navigate("select_customer")
                             }
 
                             Spacer(Modifier.height(4.dp))
