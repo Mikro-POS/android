@@ -24,8 +24,11 @@ import androidx.navigation.NavController
 import com.herlianzhang.mikropos.ui.common.AlertConfirmation
 import com.herlianzhang.mikropos.ui.common.DefaultSnackbar
 import com.herlianzhang.mikropos.ui.common.LoadingView
+import com.herlianzhang.mikropos.ui.common.PrinterAlert
 import com.herlianzhang.mikropos.utils.CurrencyVisualTransformation
 import com.herlianzhang.mikropos.utils.extensions.inputCurrency
+import com.herlianzhang.mikropos.vo.CreateStock
+import com.herlianzhang.mikropos.vo.StockSource
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -37,7 +40,8 @@ fun CreateStockScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val localFocusManager = LocalFocusManager.current
     var showAlertConfirmation by remember { mutableStateOf(false) }
-    val checkedState = remember {
+    var showPrinterAlert by remember { mutableStateOf(false)}
+    val checkedState = rememberSaveable {
         mutableStateOf(false)
     }
     var supplierName by rememberSaveable {
@@ -50,16 +54,22 @@ fun CreateStockScreen(
         mutableStateOf("")
     }
 
-    fun createStock(withChecking: Boolean = true) {
-        if (withChecking && viewModel.shouldShowWarning(price.toLong())) {
+    fun createStock(
+        withValidation: Boolean = true,
+        checkPrinter: Boolean = true
+    ) {
+        if (withValidation && viewModel.shouldShowWarning(price.toLong())) {
             showAlertConfirmation = true
             return
         }
         viewModel.createStock(
-            supplierName,
-            amount.toLong(),
-            price.toLong(),
-            checkedState.value
+            CreateStock(
+                supplierName = supplierName.ifEmpty { null },
+                amount = amount.toInt(),
+                purchasePrice = price.toLong(),
+                source = if (checkedState.value) StockSource.CUSTOMER else StockSource.SUPPLIER
+            ),
+            checkPrinter = checkPrinter
         )
     }
 
@@ -69,6 +79,9 @@ fun CreateStockScreen(
                 is CreateStockEvent.ShowErrorSnackbar -> {
                     val message = event.message ?: return@collectLatest
                     scaffoldState.snackbarHostState.showSnackbar(message)
+                }
+                is CreateStockEvent.ShowPrinterAlert -> {
+                    showPrinterAlert = true
                 }
                 is CreateStockEvent.BackWithResult -> {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
@@ -100,7 +113,7 @@ fun CreateStockScreen(
                     onClick = {
                         createStock()
                     },
-                    enabled = amount.toLongOrNull() != null && price.toLongOrNull() != null
+                    enabled = amount.toIntOrNull() != null && price.toLongOrNull() != null
                 ) {
                     Icon(Icons.Rounded.Done, contentDescription = null)
                 }
@@ -182,7 +195,7 @@ fun CreateStockScreen(
                    keyboardActions = KeyboardActions(
                        onDone = {
                            localFocusManager.clearFocus()
-                           if (amount.toLongOrNull() != null && price.toLongOrNull() != null) {
+                           if (amount.toIntOrNull() != null && price.toLongOrNull() != null) {
                                createStock()
                            }
                        }
@@ -203,8 +216,14 @@ fun CreateStockScreen(
                 showDialog = showAlertConfirmation,
                 title = "Catat Persediaan",
                 message = "Harga Pembelian lebih tinggi daripada harga Jual.\nApakah anda yakin ingin lanjut mencatat persediaan ini?",
-                onConfirm = { createStock(false) },
+                onConfirm = { createStock(withValidation = false) },
                 onDismiss = { showAlertConfirmation = false }
+            )
+            PrinterAlert(
+                navController = navController,
+                showDialog = showPrinterAlert,
+                onConfirm = { createStock(checkPrinter = false) },
+                onDismiss = { showPrinterAlert = false}
             )
         }
     }

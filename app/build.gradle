@@ -116,4 +116,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:0.23.1"
     implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.2.0'
     implementation "com.google.accompanist:accompanist-navigation-animation:0.21.3-beta"
+
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+    kapt 'com.github.bumptech.glide:compiler:4.13.2'
 }

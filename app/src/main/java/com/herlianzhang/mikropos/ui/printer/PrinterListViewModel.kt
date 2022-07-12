@@ -14,8 +14,11 @@ import com.herlianzhang.mikropos.utils.extensions.getPrinter
 import com.herlianzhang.mikropos.utils.extensions.printFormattedText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,9 +42,17 @@ class PrinterListViewModel @Inject constructor(
     val isPrinterAvailable: StateFlow<Boolean>
         get() = _isPrinterAvailable
 
+    private val _isPrinterEmpty = MutableStateFlow(false)
+    val isPrinterEmpty: StateFlow<Boolean>
+        get() = _isPrinterEmpty
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean>
         get() = _isLoading
+
+    private val _event = Channel<PrinterListEvent>()
+    val event: Flow<PrinterListEvent>
+        get() = _event.receiveAsFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -56,7 +67,7 @@ class PrinterListViewModel @Inject constructor(
         }
     }
 
-    fun getPrinters() {
+    fun getPrinters(withAlert: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.emit(true)
             try {
@@ -64,11 +75,14 @@ class PrinterListViewModel @Inject constructor(
                 _printers.emit(printers.toList())
                 availablePrinter = userPref.getPrinter(printers)
                 _isPrinterAvailable.emit(true)
-            } catch(_: Exception) {
+            } catch(e: Exception) {
                 availablePrinter = null
                 _isPrinterAvailable.emit(false)
+                if (withAlert)
+                    _event.send(PrinterListEvent.ShowErrorSnackbar(e.message))
             } finally {
                 _isLoading.emit(false)
+                _isPrinterEmpty.emit(_printers.value.isEmpty())
             }
         }
     }
@@ -76,7 +90,7 @@ class PrinterListViewModel @Inject constructor(
     fun connect(address: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             userPref.printerAddress = address
-            getPrinters()
+            getPrinters(true)
         }
     }
 
@@ -84,8 +98,7 @@ class PrinterListViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _isLoading.emit(true)
             try {
-                val printer = availablePrinter?.connect()!!
-                printer.printFormattedText(
+                availablePrinter!!.printFormattedText(
                     """
                         [C]<b>================================</b>
                         [C]<b>Coba Print</b>

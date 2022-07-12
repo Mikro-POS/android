@@ -1,5 +1,6 @@
 package com.herlianzhang.mikropos.ui.printer
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection
 
+@SuppressLint("MissingPermission")
 @Composable
 fun PrinterItem(
     item: BluetoothConnection,

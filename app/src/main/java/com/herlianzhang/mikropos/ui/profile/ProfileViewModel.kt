@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.repository.ImageRepository
 import com.herlianzhang.mikropos.repository.UserRepository
+import com.herlianzhang.mikropos.utils.UserPreferences
 import com.herlianzhang.mikropos.utils.extensions.getImageDisplayName
 import com.herlianzhang.mikropos.vo.UpdateUser
 import com.herlianzhang.mikropos.vo.User
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val imageRepository: ImageRepository,
+    private val userPref: UserPreferences,
     app: Application
 ) : AndroidViewModel(app) {
     private var updateJob: Job? = null
@@ -69,7 +71,10 @@ class ProfileViewModel @Inject constructor(
             userRepository.getUserInfo().collect { result ->
                 when(result) {
                     is ApiResult.Loading -> _isLoading.emit(result.state.value)
-                    is ApiResult.Success -> _data.emit(result.data)
+                    is ApiResult.Success -> {
+                        _data.emit(result.data)
+                        userPref.user = result.data
+                    }
                     is ApiResult.Failed -> _isError.emit(true)
                 }
             }
@@ -90,6 +95,7 @@ class ProfileViewModel @Inject constructor(
                     is ApiResult.Success -> {
                         _event.send(ProfileEvent.HideDialog)
                         _data.emit(result.data)
+                        userPref.user = result.data
                     }
                     is ApiResult.Failed -> _event.send(ProfileEvent.ShowErrorSnackbar(result.message))
                 }

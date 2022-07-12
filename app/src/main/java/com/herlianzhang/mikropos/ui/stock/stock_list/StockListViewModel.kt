@@ -13,10 +13,9 @@ import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
 import com.herlianzhang.mikropos.repository.StockRepository
 import com.herlianzhang.mikropos.utils.UserPreferences
-import com.herlianzhang.mikropos.utils.extensions.formatDate
 import com.herlianzhang.mikropos.utils.extensions.getPrinter
 import com.herlianzhang.mikropos.utils.extensions.printFormattedText
-import com.herlianzhang.mikropos.vo.Product
+import com.herlianzhang.mikropos.utils.extensions.printValue
 import com.herlianzhang.mikropos.vo.ProductDetail
 import com.herlianzhang.mikropos.vo.Stock
 import dagger.assisted.Assisted
@@ -91,20 +90,9 @@ class StockListViewModel @AssistedInject constructor(
             _isLoading.emit(true)
             try {
                 val printer = userPref.getPrinter()
-                printer.printFormattedText(
-                    """
-                        
-                        [C]<qrcode size='30'>https://mikropos.herokuapp.com/stocks/${item.productId}/${item.id}</qrcode>
-                        
-                        
-                        [C]<b>#ID: ${item.id}</b>
-                        [C]<b>Total: ${item.amount}</b>
-                        
-                        [C]<b>${item.createdAt.formatDate() ?: "-"}</b>
-                    """.trimIndent()
-                )
-            } catch (_: Exception) {
-                // show error
+                printer.printFormattedText(item.printValue(product))
+            } catch (e: Exception) {
+                _event.send(StockListEvent.ShowErrorSnackbar(e.message))
             } finally {
                 _isLoading.emit(false)
             }

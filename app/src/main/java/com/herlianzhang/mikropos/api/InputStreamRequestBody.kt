@@ -3,6 +3,8 @@ package com.herlianzhang.mikropos.api
 import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
 import android.net.Uri
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -22,7 +24,12 @@ class InputStreamRequestBody(
         val input = contentResolver.openInputStream(uri)
         val baos = ByteArrayOutputStream()
         val bitmap = BitmapFactory.decodeStream(input)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos)
+        if (contentType() == "image/png".toMediaTypeOrNull()) {
+            bitmap.setHasAlpha(true)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 50, baos)
+        } else {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos)
+        }
         sink.write(baos.toByteArray())
     }
 }

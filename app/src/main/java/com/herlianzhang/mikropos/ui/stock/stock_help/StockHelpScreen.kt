@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ChevronRight
-import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,10 +21,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.herlianzhang.mikropos.ui.common.DefaultSnackbar
+import com.herlianzhang.mikropos.ui.common.StockHelpDialog
 import com.herlianzhang.mikropos.vo.TransactionItem
+import kotlinx.coroutines.launch
 
 @Composable
 fun StockHelpScreen(
@@ -34,17 +34,36 @@ fun StockHelpScreen(
     transactionItems: List<TransactionItem>
 ) {
     val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
     var isShowDialog by rememberSaveable {
         mutableStateOf(false)
     }
     var selectedItems: TransactionItem? by rememberSaveable {
         mutableStateOf(null)
     }
+    var highlight: Int? by rememberSaveable {
+        mutableStateOf(null)
+    }
     navController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
         savedState.getLiveData<String>("qr-result").let {
             val newData by it.observeAsState()
             LaunchedEffect(newData) {
-//                dialogValue = newData ?: return@LaunchedEffect
+                val data = newData ?: return@LaunchedEffect
+                if (data.startsWith("stock")) {
+                    val params = data.split("/")
+                    val stockId = params.getOrNull(1)?.toIntOrNull() ?: return@LaunchedEffect
+                    if (selectedItems?.stocks?.any { stock -> stock.stockId == stockId} == true) {
+                        highlight = stockId
+                    } else {
+                        coroutineScope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar("Anda mengambil persediaan yang salah")
+                        }
+                    }
+                } else {
+                    coroutineScope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar("QR tidak valid")
+                    }
+                }
                 savedState.remove<String>("qr-result")
             }
         }
@@ -111,71 +130,22 @@ fun StockHelpScreen(
                     }
                 }
             }
-            if (isShowDialog) {
-                Dialog(
-                    onDismissRequest = {
-                        isShowDialog = false
-                    }
-                ) {
-                    Card(
-                        shape = RoundedCornerShape(16.dp),
-                    ) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .heightIn(max = 300.dp)
-                                .padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            item {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    AsyncImage(
-                                        model = selectedItems?.product?.photo,
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .size(32.dp)
-                                            .clip(CircleShape)
-                                            .background(Color.LightGray),
-                                        contentScale = ContentScale.Crop
-                                    )
-
-                                    Text(
-                                        selectedItems?.product?.name ?: selectedItems?.productName ?: "-",
-                                        modifier = Modifier.weight(1f)
-                                    )
-
-                                    IconButton(onClick = { /*TODO*/ }) {
-                                        Icon(Icons.Rounded.QrCodeScanner, contentDescription = null)
-                                    }
-                                }
-                            }
-
-                            item {
-                                Spacer(
-                                    modifier = Modifier
-                                        .height(1.dp)
-                                        .fillMaxWidth()
-                                        .clip(RoundedCornerShape(50))
-                                        .background(Color.LightGray)
-                                )
-                            }
-
-                            selectedItems?.stocks?.let { stocks ->
-                                items(stocks) { item ->
-                                    Column {
-                                        Text(
-                                            "#id: ${item.stockId}",
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text("Ambil sebanyak: ${item.amount}")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            StockHelpDialog(
+                isShowDialog = isShowDialog,
+                highlight = highlight,
+                onDismiss = {
+                    isShowDialog = false
+                    selectedItems = null
+                    highlight = null
+                },
+                onScan = { navController.navigate("qr_scanner") },
+                item = selectedItems
+            )
+            DefaultSnackbar(
+                snackbarHostState = scaffoldState.snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            ) {
+                scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }
         }
     }

@@ -40,7 +40,7 @@ fun ExpenseCategoryScreen(
             val newData by it.observeAsState()
             LaunchedEffect(newData) {
                 newData ?: return@LaunchedEffect
-                viewModel.tryAgain()
+                viewModel.refresh()
                 savedState.remove<Boolean>("refresh_expense_categories")
             }
         }

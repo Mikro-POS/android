@@ -43,6 +43,7 @@ fun CreateCustomerScreen(
     viewModel: CreateCustomerViewModel
 ) {
     val localFocusManager = LocalFocusManager.current
+    val scaffoldState = rememberScaffoldState()
     var name by rememberSaveable {
         mutableStateOf("")
     }
@@ -56,7 +57,6 @@ fun CreateCustomerScreen(
         mutableStateOf("")
     }
     val bitmap by viewModel.bitmap.collectAsState()
-    val scaffoldState = rememberScaffoldState()
     val isLoading by viewModel.isLoading.collectAsState()
     val isUploadingImage by viewModel.isUploadingImage.collectAsState()
     val launcher =
@@ -82,6 +82,7 @@ fun CreateCustomerScreen(
             }
         }
     }
+
     Scaffold(
         scaffoldState = scaffoldState,
         snackbarHost = {

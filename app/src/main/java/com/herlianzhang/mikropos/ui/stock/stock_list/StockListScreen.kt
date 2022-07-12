@@ -130,7 +130,7 @@ fun StockListScreen(
             ErrorView(isError, onClick = { viewModel.tryAgain() })
             DefaultSnackbar(
                 snackbarHostState = scaffoldState.snackbarHostState,
-                modifier = Modifier.align(Alignment.TopCenter)
+                modifier = Modifier.align(Alignment.BottomCenter)
             ) {
                 scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
             }

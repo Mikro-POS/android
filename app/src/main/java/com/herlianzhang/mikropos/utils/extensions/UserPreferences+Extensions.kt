@@ -9,11 +9,15 @@ import kotlin.jvm.Throws
 fun UserPreferences.getPrinter(connections: Array<BluetoothConnection>? = null): BluetoothConnection {
     val printers = connections ?: BluetoothPrintersConnections().list!!
     if (this.printerAddress.isNullOrBlank())
-        throw Exception("printer not selected yet")
+        throw Exception("Printer belum dipilih")
     for (printer in printers) {
         if (printer.device.address == this.printerAddress) {
-            return printer.connect()
+            try {
+                return printer.connect()
+            } catch (_: Exception) {
+                throw Exception("printer tidak ditemukan")
+            }
         }
     }
-    throw Exception("printer not found")
+    throw Exception("printer tidak ditemukan")
 }

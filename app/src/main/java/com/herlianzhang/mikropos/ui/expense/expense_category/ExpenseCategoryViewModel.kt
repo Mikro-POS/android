@@ -2,6 +2,7 @@ package com.herlianzhang.mikropos.ui.expense.expense_category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
 import com.herlianzhang.mikropos.repository.ExpenseRepository
@@ -51,6 +52,16 @@ class ExpenseCategoryViewModel @Inject constructor(
             return
         page += 1
         getCategories()
+    }
+
+    fun refresh() {
+        viewModelScope.launch {
+            fetchJob?.cancel()
+            page = 1
+            isLastPage = false
+            _categories.emit(listOf())
+            getCategories()
+        }
     }
 
     fun tryAgain() {

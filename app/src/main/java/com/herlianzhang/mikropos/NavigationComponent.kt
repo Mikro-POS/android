@@ -3,7 +3,8 @@ package com.herlianzhang.mikropos
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -178,7 +179,7 @@ fun NavigationComponent(
         }
         composable("printer_list") {
             val viewModel = hiltViewModel<PrinterListViewModel>()
-            PrinterListScreen(viewModel)
+            PrinterListScreen(navController, viewModel)
         }
         composable("checkout") {
             val viewModel = hiltViewModel<CheckoutViewModel>()
@@ -194,9 +195,16 @@ fun NavigationComponent(
             }
         }
         composable("transaction/stock_help") {
-            navController.previousBackStackEntry?.savedStateHandle?.get<List<TransactionItem>>("transactionItems")?.let {
-                StockHelpScreen(navController, it)
+            var items: List<TransactionItem> by rememberSaveable {
+                mutableStateOf(emptyList())
             }
+            navController.previousBackStackEntry?.savedStateHandle?.let { savedState ->
+                savedState.get<List<TransactionItem>>("transactionItems")?.let {
+                    items = it
+                    savedState.remove<List<TransactionItem>>("transactionItems")
+                }
+            }
+            StockHelpScreen(navController, items)
         }
         composable("create_expense") {
             val viewModel = hiltViewModel<CreateExpenseViewModel>()

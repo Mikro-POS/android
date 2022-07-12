@@ -26,6 +26,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun navigateToQRScan() {
+        viewModelScope.launch {
+            _event.send(HomeEvent.NavigateToQRScan)
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
             userPref.clearUser()

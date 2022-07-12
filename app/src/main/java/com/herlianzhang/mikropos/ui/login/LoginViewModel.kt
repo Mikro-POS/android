@@ -34,6 +34,7 @@ class LoginViewModel @Inject constructor(
                     is ApiResult.Success -> {
                         val accessToken = result.data?.accessToken ?: return@collect
                         userPref.accessToken = accessToken
+                        userPref.user = result.data.user
                         _event.send(LoginEvent.NavigateToHome)
                     }
                     is ApiResult.Failed -> _event.send(LoginEvent.ShowErrorSnackbar(result.message))

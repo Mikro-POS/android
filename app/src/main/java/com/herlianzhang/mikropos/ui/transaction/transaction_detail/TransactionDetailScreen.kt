@@ -47,6 +47,9 @@ fun TransactionDetailScreen(
     var isShowDialog by rememberSaveable {
         mutableStateOf(false)
     }
+    var isShowStatusDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
     val isDialogLoading by viewModel.isDialogLoading.collectAsState()
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
@@ -82,7 +85,8 @@ fun TransactionDetailScreen(
                     textAlign = TextAlign.Center
                 )
                 IconButton(
-                    onClick = { },
+                    onClick = { viewModel.printTransaction() },
+                    enabled = !isLoading && data != null
                 ) {
                     Icon(Icons.Rounded.Print, contentDescription = null)
                 }
@@ -121,7 +125,12 @@ fun TransactionDetailScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {  },
+                            .clickable {
+                                coroutineScope.launch {
+                                    bottomSheetScaffoldState.bottomSheetState.collapse()
+                                    viewModel.printOrderTicket()
+                                }
+                            },
                     )
 
                     Text(
@@ -148,8 +157,8 @@ fun TransactionDetailScreen(
                                 .fillMaxWidth()
                                 .clickable {
                                     coroutineScope.launch {
+                                        isShowStatusDialog = true
                                         bottomSheetScaffoldState.bottomSheetState.collapse()
-                                        viewModel.changeTransactionStatusToLost()
                                     }
                                 },
                         )
@@ -295,7 +304,7 @@ fun TransactionDetailScreen(
                                         if (data.status == TransactionStatus.DEBT) {
                                             isShowDialog = true
                                         } else {
-
+                                            viewModel.printTransaction()
                                         }
                                     }
                                 ) {
@@ -328,6 +337,17 @@ fun TransactionDetailScreen(
                         isShowDialog = false
                     },
                     onSubmit = { viewModel.payInstallments(it) }
+                )
+                AlertConfirmation(
+                    showDialog = isShowStatusDialog,
+                    title = "Tandai Sebagai Hilang",
+                    message = "Apakah anda yakin ingin menandai transaksi ini sebagai hilang?",
+                    onDismiss = {
+                        isShowStatusDialog = false
+                    },
+                    onConfirm = {
+                        viewModel.changeTransactionStatusToLost()
+                    }
                 )
                 DefaultSnackbar(
                     snackbarHostState = scaffoldState.snackbarHostState,

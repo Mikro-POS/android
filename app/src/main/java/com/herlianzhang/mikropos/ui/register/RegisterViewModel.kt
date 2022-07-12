@@ -47,6 +47,7 @@ class RegisterViewModel @Inject constructor(
                     is ApiResult.Success -> {
                         val accessToken = result.data?.accessToken ?: return@collect
                         userPref.accessToken = accessToken
+                        userPref.user = result.data.user
                         _event.send(RegisterEvent.NavigateToHome)
                     }
                     is ApiResult.Failed -> _event.send(RegisterEvent.ShowErrorSnackbar(result.message))

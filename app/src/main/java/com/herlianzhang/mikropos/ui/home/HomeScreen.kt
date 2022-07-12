@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,7 @@ import com.herlianzhang.mikropos.ui.setting.MenuScreen
 import com.herlianzhang.mikropos.ui.transaction.transaction_list.TransactionListScreen
 import com.herlianzhang.mikropos.ui.transaction.transaction_list.TransactionListViewModel
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -44,6 +46,22 @@ fun HomeScreen(
     val currentRoute = navBackStackEntry?.destination?.route
     var showDialog by remember { mutableStateOf(false) }
 
+    rootNavController.currentBackStackEntry?.savedStateHandle?.let { savedState ->
+        savedState.getLiveData<String>("qr-result").let {
+            val newData by it.observeAsState()
+            LaunchedEffect(newData) {
+                val data = newData ?: return@LaunchedEffect
+                Timber.d("masuk ${data}")
+                if (data.startsWith("transaction")) {
+                    Timber.d("masuk ${data}")
+                    val transactionId = data.split("/").getOrNull(1)?.toIntOrNull() ?: return@LaunchedEffect
+                    rootNavController.navigate("transaction/${transactionId}")
+                }
+                savedState.remove<String>("qr-result")
+            }
+        }
+    }
+
     LaunchedEffect(key1 = Unit) {
         viewModel.event.collectLatest { event ->
             when (event) {
@@ -56,6 +74,9 @@ fun HomeScreen(
                 }
                 HomeEvent.NavigateToSelectProduct -> {
                     rootNavController.navigate("select_product")
+                }
+                HomeEvent.NavigateToQRScan -> {
+                    rootNavController.navigate("qr_scanner")
                 }
             }
         }

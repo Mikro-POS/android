@@ -159,7 +159,7 @@ class ProductDetailViewModel @AssistedInject constructor(
         }
     }
 
-    fun getProductJSON() = gson.toJson(_data.value?.copy(name = null, photo = null, sku = null)).toString()
+    fun getProductJSON() = gson.toJson(_data.value?.copy(photo = null)).toString()
 
     @AssistedFactory
     interface Factory {

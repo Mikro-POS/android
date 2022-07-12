@@ -112,7 +112,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .fillMaxSize()
-                                .background(Color.LightGray),
+                                .background(if (data.logo == null) Color.LightGray else Color.Transparent),
                             model = data.logo,
                             contentScale = ContentScale.Crop,
                             contentDescription = null

@@ -137,7 +137,8 @@ fun TransactionListScreen(
             ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
                         Spacer(Modifier.height(12.dp))

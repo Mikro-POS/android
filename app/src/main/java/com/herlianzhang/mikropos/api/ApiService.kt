@@ -110,7 +110,7 @@ interface ApiService {
     @JvmSuppressWildcards
     suspend fun createStock(
         @Path("product_id") productId: Int,
-        @Body params: Map<String, Any>
+        @Body data: CreateStock
     ): Response<Stock>
 
     @DELETE("stocks/{product_id}/{stock_id}")

@@ -20,7 +20,7 @@ fun HomeAction(route: String?, viewModel: HomeViewModel, onLogout: () -> Unit) {
             }
         }
         Screen.TransactionList.route -> {
-            IconButton(onClick = {}) {
+            IconButton(onClick = { viewModel.navigateToQRScan() }) {
                 Icon(Icons.Rounded.QrCodeScanner, contentDescription = null)
             }
         }

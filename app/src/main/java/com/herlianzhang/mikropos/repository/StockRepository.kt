@@ -2,6 +2,7 @@ package com.herlianzhang.mikropos.repository
 
 import com.herlianzhang.mikropos.api.ApiCaller
 import com.herlianzhang.mikropos.api.ApiService
+import com.herlianzhang.mikropos.vo.CreateStock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,9 +21,9 @@ class StockRepository @Inject constructor(
 
     fun createStock(
         productId: Int,
-        params: Map<String, Any>
+        data: CreateStock
     ) = apiCaller {
-        apiService.createStock(productId, params)
+        apiService.createStock(productId, data)
     }
 
     fun deleteStock(
