@@ -64,10 +64,11 @@ fun StockItem(
                 )
             }
             DetailItem(key = "ID", value = "#${stock.id}", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-            DetailItem(key = "Jumlah Total", value = stock.amount?.toString(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-            DetailItem(key = "Jumlah Terjual", value = stock.soldAmount?.toString(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-            DetailItem(key = "Sisa Persediaan", value = stock.amount?.minus(stock.soldAmount ?: 0)?.toString(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-            DetailItem(key = "Harga Beli", value = stock.purchasePrice.toRupiah(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            DetailItem(key = "Jumlah Total", value = "${stock.amount} kotak", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            DetailItem(key = "Jumlah Terjual", value = "${stock.soldAmount} kotak", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            DetailItem(key = "Sisa Persediaan", value = "${stock.amount?.minus(stock.soldAmount ?: 0)} kotak", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            DetailItem(key = "Harga Beli Per Kotak", value = stock.purchasePrice.toRupiah(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            DetailItem(key = "Harga Beli Total", value = stock.purchasePrice?.times(stock.amount ?: 0).toRupiah(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
             Spacer(
                 modifier = Modifier
                     .height(1.dp)

@@ -83,7 +83,7 @@ fun ChangePasswordScreen(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = null)
                 }
                 Text(
-                    "Tambah Kategori",
+                    "Ganti Password",
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )

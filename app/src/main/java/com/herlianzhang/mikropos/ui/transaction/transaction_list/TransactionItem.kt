@@ -96,7 +96,7 @@ fun TransactionItem(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "${item.item?.amount ?: 0} barang",
+                        "${item.item?.amount ?: 0} kotak",
                         style = MaterialTheme.typography.caption,
                         color = Color.Gray
                     )

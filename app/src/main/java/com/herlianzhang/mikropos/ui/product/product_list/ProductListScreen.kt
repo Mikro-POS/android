@@ -159,7 +159,7 @@ fun ProductListScreen(
                                 item.name,
                                 item.price?.toRupiah(),
                                 Modifier.animateItemPlacement(),
-                                "stok ${item.totalStock}",
+                                "stok ${item.totalStock} kotak",
                                 onClicked = {
                                     viewModel.onClickProduct(index, item)
                                 }

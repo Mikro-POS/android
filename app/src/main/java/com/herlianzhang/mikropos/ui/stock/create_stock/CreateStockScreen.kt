@@ -222,7 +222,7 @@ fun CreateStockScreen(
             PrinterAlert(
                 navController = navController,
                 showDialog = showPrinterAlert,
-                onConfirm = { createStock(checkPrinter = false) },
+                onConfirm = { createStock(withValidation = false, checkPrinter = false) },
                 onDismiss = { showPrinterAlert = false}
             )
         }

@@ -201,7 +201,7 @@ fun ProductDetailScreen(
                         dialogType = EditDialogType.QrCode
                         isShowDialog = true
                     }
-                    DetailItem(key = "Total Stok", value = data.totalStock?.toString()) {
+                    DetailItem(key = "Total Stok", value = "${data.totalStock} kotak") {
                         navController.navigate("stock_list/${viewModel.getProductJSON()}")
                     }
                 }

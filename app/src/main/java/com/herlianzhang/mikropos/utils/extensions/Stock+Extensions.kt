@@ -10,7 +10,7 @@ fun Stock?.printValue(product: ProductDetail): String {
         
         [C]<b>Nama Produk: ${product.name}</b>
         [C]<b>#ID Persediaan: ${this?.id}</b>
-        [C]<b>Total: ${this?.amount}</b>
+        [C]<b>Total: ${this?.amount} kotak</b>
         
         [C]<b>${this?.createdAt.formatDate() ?: "-"}</b>
     """.trimIndent()

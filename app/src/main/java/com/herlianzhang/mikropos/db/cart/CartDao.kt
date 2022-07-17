@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CartDao {
-    @Query("SELECT * FROM cart")
+    @Query("SELECT * FROM cart ORDER BY name ASC")
     fun getAll(): Flow<List<Cart>>
 
     @Query("SELECT * FROM cart WHERE id=:id")
