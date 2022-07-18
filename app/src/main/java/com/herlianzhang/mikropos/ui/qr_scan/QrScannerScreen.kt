@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -76,7 +77,9 @@ fun QrScannerScreen(navController: NavController) {
                 Text(
                     "Scan",
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
                 )
                 Spacer(Modifier.width(48.dp))
             }

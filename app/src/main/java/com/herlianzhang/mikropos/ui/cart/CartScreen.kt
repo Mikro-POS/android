@@ -1,6 +1,8 @@
 package com.herlianzhang.mikropos.ui.cart
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,7 +27,7 @@ fun CartScreen(
     viewModel: CartViewModel
 ) {
     val carts = viewModel.carts.collectAsState(emptyList())
-    val isCartEmpty = viewModel.isCartEmpty.collectAsState(false)
+    val isCartEmpty = viewModel.isCartEmpty.collectAsState(true)
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -47,7 +49,11 @@ fun CartScreen(
                     )
                 }
             }
-            AnimatedVisibility(!isCartEmpty.value) {
+            AnimatedVisibility(
+                !isCartEmpty.value,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -55,12 +61,15 @@ fun CartScreen(
                         modifier = Modifier
                             .weight(1f)
                             .height(48.dp),
+                        shape = CircleShape,
                         onClick = { navController.navigate("checkout") }
                     ) {
                         Text("Bayar")
                     }
                     IconButton(
-                        modifier = Modifier.clip(CircleShape).background(MaterialTheme.colors.primary),
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colors.primary),
                         onClick = { viewModel.clearCart() },
                     ) {
                         Icon(

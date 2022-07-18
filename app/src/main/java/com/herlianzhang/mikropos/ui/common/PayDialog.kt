@@ -1,6 +1,7 @@
 package com.herlianzhang.mikropos.ui.common
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -82,7 +83,8 @@ fun PayDialog(
                         )
 
                         Button(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().height(48.dp),
+                            shape = CircleShape,
                             enabled = !isLoading && value.isNotEmpty(),
                             onClick = { onSubmit(value) }
                         ) {

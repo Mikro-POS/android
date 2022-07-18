@@ -61,7 +61,7 @@ fun TransactionListScreen(
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
                             .border(
-                                1.dp,
+                                1.5.dp,
                                 if (filterWording != null) MaterialTheme.colors.primary else Color.Gray,
                                 RoundedCornerShape(50)
                             )
@@ -76,12 +76,12 @@ fun TransactionListScreen(
                     ) {
                         Icon(
                             Icons.Rounded.FilterList,
-                            tint = if (filterWording != null) MaterialTheme.colors.primary else Color.Black,
+                            tint = if (filterWording != null) MaterialTheme.colors.primary else Color.Gray,
                             contentDescription = null
                         )
                         Text(
                             filterWording ?: "Saring",
-                            color = if (filterWording != null) MaterialTheme.colors.primary else Color.Black
+                            color = if (filterWording != null) MaterialTheme.colors.primary else Color.Gray
                         )
                     }
                 }
@@ -92,7 +92,7 @@ fun TransactionListScreen(
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
                             .border(
-                                1.dp,
+                                1.5.dp,
                                 if (isBillingPeriod) MaterialTheme.colors.primary else Color.Gray,
                                 RoundedCornerShape(50)
                             )
@@ -103,7 +103,7 @@ fun TransactionListScreen(
                             )
                             .clickable { viewModel.filterBillingPeriod() }
                             .padding(vertical = 8.dp, horizontal = 12.dp),
-                        color = if (isBillingPeriod) MaterialTheme.colors.primary else Color.Black
+                        color = if (isBillingPeriod) MaterialTheme.colors.primary else Color.Gray
                     )
                 }
 
@@ -113,7 +113,7 @@ fun TransactionListScreen(
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
                             .border(
-                                1.dp,
+                                1.5.dp,
                                 if (isNotYetPaidOff) MaterialTheme.colors.primary else Color.Gray,
                                 RoundedCornerShape(50)
                             )
@@ -124,7 +124,7 @@ fun TransactionListScreen(
                             )
                             .clickable { viewModel.filterNotYetPaidOff() }
                             .padding(vertical = 8.dp, horizontal = 12.dp),
-                        color = if (isNotYetPaidOff) MaterialTheme.colors.primary else Color.Black
+                        color = if (isNotYetPaidOff) MaterialTheme.colors.primary else Color.Gray
                     )
                 }
             }

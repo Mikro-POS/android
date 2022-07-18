@@ -2,6 +2,7 @@ package com.herlianzhang.mikropos.ui.register
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -89,7 +90,8 @@ fun RegisterScreen(
                         style = MaterialTheme
                             .typography
                             .h4
-                            .copy(fontWeight = FontWeight.Bold)
+                            .copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colors.primary
                     )
 
                     Spacer(modifier = Modifier.height(28.dp))
@@ -186,8 +188,9 @@ fun RegisterScreen(
                 }
                 Spacer(Modifier.height(24.dp))
                 Button(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
                     enabled = username.isNotBlank() and password.isNotBlank() and name.isNotBlank(),
+                    shape = CircleShape,
                     onClick = {
                         viewModel.register(
                             username,

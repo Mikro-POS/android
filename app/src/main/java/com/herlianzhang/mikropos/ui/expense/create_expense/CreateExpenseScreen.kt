@@ -21,6 +21,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -131,7 +132,9 @@ fun CreateExpenseScreen(
                 Text(
                     "Catat Pengeluaran",
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
                 )
                 IconButton(
                     onClick = {

@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -55,7 +56,9 @@ fun ExpenseCategoryScreen(
                 Text(
                     "Pilih Kategori",
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
                 )
                 IconButton(onClick = {
                     navController.navigate("create_expense_category")

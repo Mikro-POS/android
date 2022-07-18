@@ -82,7 +82,9 @@ fun TransactionDetailScreen(
                 Text(
                     "Detail Transaksi",
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
                 )
                 IconButton(
                     onClick = { viewModel.printTransaction() },
@@ -300,6 +302,7 @@ fun TransactionDetailScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .height(48.dp),
+                                    shape = CircleShape,
                                     onClick = {
                                         if (data.status == TransactionStatus.DEBT) {
                                             isShowDialog = true

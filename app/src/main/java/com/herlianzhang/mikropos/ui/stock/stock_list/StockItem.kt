@@ -41,34 +41,57 @@ fun StockItem(
                     modifier = Modifier
                         .clip(RoundedCornerShape(bottomEnd = 16.dp))
                         .background(if (stock.source == StockSource.SUPPLIER) MaterialTheme.colors.primary else MaterialTheme.colors.secondary)
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = { onPrintClick?.invoke() }) {
-                    Icon(Icons.Rounded.Print, contentDescription = null)
+                    Icon(Icons.Rounded.Print, contentDescription = null, tint = MaterialTheme.colors.primary)
                 }
                 IconButton(onClick = { onDeleteClick?.invoke() }) {
-                    Icon(Icons.Rounded.Delete, contentDescription = null)
+                    Icon(Icons.Rounded.Delete, contentDescription = null, tint = MaterialTheme.colors.primary)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
             }
             if (stock.source == StockSource.SUPPLIER) {
                 DetailItem(key = "Nama Pemasok", value = stock.supplierName ?: "-", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-                Spacer(
-                    modifier = Modifier
-                        .height(1.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(50))
-                        .padding(horizontal = 16.dp)
-                        .background(Color.LightGray)
-                )
             }
             DetailItem(key = "ID", value = "#${stock.id}", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-            DetailItem(key = "Jumlah Total", value = "${stock.amount} kotak", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-            DetailItem(key = "Jumlah Terjual", value = "${stock.soldAmount} kotak", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-            DetailItem(key = "Sisa Persediaan", value = "${stock.amount?.minus(stock.soldAmount ?: 0)} kotak", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-            DetailItem(key = "Harga Beli Per Kotak", value = stock.purchasePrice.toRupiah(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
-            DetailItem(key = "Harga Beli Total", value = stock.purchasePrice?.times(stock.amount ?: 0).toRupiah(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            Spacer(
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(50))
+                    .padding(horizontal = 16.dp)
+                    .background(Color.LightGray)
+            )
+            Text(
+                "Jumlah Persediaan:",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                fontWeight = FontWeight.Bold
+            )
+            DetailItem(key = "Total", value = "${stock.amount} kotak", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            DetailItem(key = "Terjual", value = "${stock.soldAmount} kotak", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            DetailItem(key = "Sisa", value = "${stock.amount?.minus(stock.soldAmount ?: 0)} kotak", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            Spacer(
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(50))
+                    .padding(horizontal = 16.dp)
+                    .background(Color.LightGray)
+            )
+            Text(
+                "Harga Beli:",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                fontWeight = FontWeight.Bold
+            )
+            DetailItem(key = "Per Kotak", value = stock.purchasePrice.toRupiah(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            DetailItem(key = "Total", value = stock.purchasePrice?.times(stock.amount ?: 0).toRupiah(), paddingVertical = 12.dp, paddingHorizontal = 16.dp)
             Spacer(
                 modifier = Modifier
                     .height(1.dp)

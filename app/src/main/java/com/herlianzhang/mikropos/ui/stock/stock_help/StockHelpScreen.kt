@@ -82,7 +82,9 @@ fun StockHelpScreen(
                 Text(
                     "Ambil Persedian",
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
                 )
                 Spacer(Modifier.width(48.dp))
             }

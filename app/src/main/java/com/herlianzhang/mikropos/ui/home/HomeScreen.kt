@@ -1,14 +1,13 @@
 package com.herlianzhang.mikropos.ui.home
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,6 +18,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.herlianzhang.mikropos.R
 import com.herlianzhang.mikropos.ui.cart.CartScreen
 import com.herlianzhang.mikropos.ui.cart.CartViewModel
 import com.herlianzhang.mikropos.ui.common.AlertConfirmation
@@ -89,7 +89,9 @@ fun HomeScreen(
                 Text(
                     Screen.getLabel(currentRoute),
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
                 )
                 HomeAction(
                     currentRoute,
@@ -103,10 +105,17 @@ fun HomeScreen(
         bottomBar = {
             BottomNavigation {
                 items.forEach { screen ->
+                    val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
                     BottomNavigationItem(
-                        icon = { Icon(screen.icon, contentDescription = null) },
+                        icon = {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(id = if (isSelected) screen.iconFilled else screen.iconOutlined),
+                                contentDescription = null
+                            )
+                        },
                         label = { Text(screen.label) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                        selected = isSelected,
                         onClick = {
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {

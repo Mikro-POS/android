@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -126,7 +127,9 @@ fun CheckoutScreen(
                 Text(
                     "Bayar",
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold
                 )
                 Spacer(Modifier.width(48.dp))
             }
@@ -246,8 +249,9 @@ fun CheckoutScreen(
                 }
 
                 Button(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
                     enabled = selectedCustomer != null && (!checkedState || (dueDate != null && totalInstallment != null)),
+                    shape = CircleShape,
                     onClick = { showAlertConfirmation = true }
                 ) {
                     Text(totalPrice.value.toRupiah())

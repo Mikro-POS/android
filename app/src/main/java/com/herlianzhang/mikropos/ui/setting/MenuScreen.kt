@@ -1,40 +1,18 @@
 package com.herlianzhang.mikropos.ui.setting
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
-@Composable
-fun MenuItem(label: String, icon: ImageVector, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .clickable { onClick() }
-            .padding(horizontal = 8.dp, vertical = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        Icon(icon, contentDescription = null)
-        Text(
-            label,
-            modifier = Modifier.weight(1f)
-        )
-        Icon(Icons.Rounded.NavigateNext, contentDescription = null)
-    }
-}
 
 @Composable
 fun MenuScreen(navController: NavController) {
@@ -47,7 +25,12 @@ fun MenuScreen(navController: NavController) {
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Spacer(Modifier.height(8.dp))
-        Text("Akun")
+        Text(
+            "Akun",
+            style = MaterialTheme.typography.h6,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colors.primary
+        )
         MenuItem(label = "Ubah Profil", icon = Icons.Rounded.AccountCircle) {
             navController.navigate("profile")
         }
@@ -59,7 +42,12 @@ fun MenuScreen(navController: NavController) {
         }
 
         Spacer(Modifier.height(0.dp))
-        Text("Inventaris")
+        Text(
+            "Inventaris",
+            style = MaterialTheme.typography.h6,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colors.primary
+        )
         MenuItem(label = "Kelola Produk", icon = Icons.Rounded.Inventory2) {
             navController.navigate("product_list")
         }
