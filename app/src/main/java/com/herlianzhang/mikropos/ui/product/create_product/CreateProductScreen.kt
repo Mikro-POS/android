@@ -109,7 +109,7 @@ fun CreateProductScreen(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = null)
                 }
                 Text(
-                    "Buat Produk",
+                    "Tambah Produk",
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.h6,
