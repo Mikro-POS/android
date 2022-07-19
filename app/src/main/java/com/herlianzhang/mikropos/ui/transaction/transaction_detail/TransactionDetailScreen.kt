@@ -204,7 +204,7 @@ fun TransactionDetailScreen(
                                         )
                                     }
                                     DetailItem(key = "Nama Pelanggan", value = data.customer?.name, paddingHorizontal = 0.dp, paddingVertical = 0.dp, valueAlignment = TextAlign.End)
-                                    DetailItem(key = "Tanggal Pembelian", value = data.createdAt.formatDate(), paddingHorizontal = 0.dp, paddingVertical = 0.dp, valueAlignment = TextAlign.End)
+                                    DetailItem(key = "Tanggal Penjualan", value = data.createdAt.formatDate(), paddingHorizontal = 0.dp, paddingVertical = 0.dp, valueAlignment = TextAlign.End)
                                     Spacer(
                                         modifier = Modifier
                                             .height(1.dp)

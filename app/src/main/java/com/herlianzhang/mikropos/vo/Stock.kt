@@ -15,7 +15,7 @@ data class Stock(
         get() {
             return when (source) {
                 StockSource.SUPPLIER -> "Pemasok"
-                StockSource.CUSTOMER -> "Pengembalian Dana"
+                StockSource.CUSTOMER -> "Pengembalian Barang"
                 else -> "Tidak Diketahui"
             }
         }

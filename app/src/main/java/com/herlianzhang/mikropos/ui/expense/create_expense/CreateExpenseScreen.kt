@@ -114,6 +114,7 @@ fun CreateExpenseScreen(
                     date = null
                     nominal = ""
                     desc = ""
+                    localFocusManager.clearFocus()
                 }
             }
         }
@@ -130,7 +131,7 @@ fun CreateExpenseScreen(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = null)
                 }
                 Text(
-                    "Catat Pengeluaran",
+                    "Catat Biaya Operasional",
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.h6,

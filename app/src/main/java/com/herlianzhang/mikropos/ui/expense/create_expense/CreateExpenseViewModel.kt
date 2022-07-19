@@ -34,7 +34,7 @@ class CreateExpenseViewModel @Inject constructor(
                     is ApiResult.Loading -> _isLoading.emit(result.state.value)
                     is ApiResult.Failed -> _event.send(CreateExpenseEvent.ShowErrorSnackbar(result.message))
                     is ApiResult.Success -> {
-                        _event.send(CreateExpenseEvent.ShowErrorSnackbar("Pengeluaran berhasil dibuat"))
+                        _event.send(CreateExpenseEvent.ShowErrorSnackbar("Biaya operasional berhasil dicatat"))
                         delay(500)
                         _event.send(CreateExpenseEvent.ClearUserInput)
                     }

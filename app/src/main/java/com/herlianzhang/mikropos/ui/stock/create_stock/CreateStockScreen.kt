@@ -133,7 +133,7 @@ fun CreateStockScreen(
                    modifier = Modifier.fillMaxWidth(),
                    verticalAlignment = Alignment.CenterVertically
                ) {
-                   Text("Pengembalian Dana?")
+                   Text("Pengembalian Barang?")
                    Switch(
                        checked = checkedState.value,
                        onCheckedChange = {

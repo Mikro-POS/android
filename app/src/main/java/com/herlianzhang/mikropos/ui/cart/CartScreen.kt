@@ -64,7 +64,7 @@ fun CartScreen(
                         shape = CircleShape,
                         onClick = { navController.navigate("checkout") }
                     ) {
-                        Text("Bayar")
+                        Text("Pembayaran")
                     }
                     IconButton(
                         modifier = Modifier

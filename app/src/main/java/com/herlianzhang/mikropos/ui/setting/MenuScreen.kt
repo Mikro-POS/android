@@ -54,7 +54,7 @@ fun MenuScreen(navController: NavController) {
         MenuItem(label = "Kelola Pelanggan", icon = Icons.Rounded.SupervisedUserCircle) {
             navController.navigate("customer_list")
         }
-        MenuItem(label = "Catat Pengeluaran", icon = Icons.Rounded.Paid) {
+        MenuItem(label = "Catat Biaya Operasional", icon = Icons.Rounded.Paid) {
             navController.navigate("create_expense")
         }
     }
