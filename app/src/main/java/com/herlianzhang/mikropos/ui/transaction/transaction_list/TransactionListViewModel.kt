@@ -90,7 +90,7 @@ class TransactionListViewModel @Inject constructor(
         this.endDate = endDate
         val wording = when {
             startDate != null && endDate != null -> {
-                "${startDate.formatDate("dd-MM-yy")} s.d ${startDate.formatDate("dd-MM-yy")}"
+                "${startDate.formatDate("dd-MM-yy")} s.d ${endDate.formatDate("dd-MM-yy")}"
             }
             startDate != null -> {
                 "Dari ${startDate.formatDate("dd-MM-yy")}"
