@@ -125,7 +125,7 @@ fun CheckoutScreen(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = null)
                 }
                 Text(
-                    "Bayar",
+                    "Pembayaran",
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.h6,

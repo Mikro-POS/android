@@ -153,7 +153,7 @@ fun TransactionDetailScreen(
 
                     if (data?.status == TransactionStatus.DEBT) {
                         Text(
-                            "Tandai Sebagai Hilang",
+                            "Tandai Sebagai Tak Tertagih",
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -343,8 +343,8 @@ fun TransactionDetailScreen(
                 )
                 AlertConfirmation(
                     showDialog = isShowStatusDialog,
-                    title = "Tandai Sebagai Hilang",
-                    message = "Apakah anda yakin ingin menandai transaksi ini sebagai hilang?",
+                    title = "Tandai Sebagai Tak Tertagih",
+                    message = "Apakah anda yakin ingin menandai transaksi ini sebagai tak tertagih?",
                     onDismiss = {
                         isShowStatusDialog = false
                     },
