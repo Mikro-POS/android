@@ -80,7 +80,7 @@ fun StockHelpScreen(
                     Icon(Icons.Rounded.ArrowBack, contentDescription = null)
                 }
                 Text(
-                    "Ambil Persedian",
+                    "Ambil Persediaan",
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.h6,
