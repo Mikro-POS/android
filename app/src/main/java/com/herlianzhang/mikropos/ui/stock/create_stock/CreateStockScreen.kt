@@ -1,6 +1,9 @@
 package com.herlianzhang.mikropos.ui.stock.create_stock
 
+import android.app.DatePickerDialog
+import android.widget.DatePicker
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -9,11 +12,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.Event
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -27,16 +33,19 @@ import com.herlianzhang.mikropos.ui.common.DefaultSnackbar
 import com.herlianzhang.mikropos.ui.common.LoadingView
 import com.herlianzhang.mikropos.ui.common.PrinterAlert
 import com.herlianzhang.mikropos.utils.CurrencyVisualTransformation
+import com.herlianzhang.mikropos.utils.extensions.formatDate
 import com.herlianzhang.mikropos.utils.extensions.inputCurrency
 import com.herlianzhang.mikropos.vo.CreateStock
 import com.herlianzhang.mikropos.vo.StockSource
 import kotlinx.coroutines.flow.collectLatest
+import java.util.*
 
 @Composable
 fun CreateStockScreen(
     navController: NavController,
     viewModel: CreateStockViewModel
 ) {
+    val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
     val isLoading by viewModel.isLoading.collectAsState()
     val localFocusManager = LocalFocusManager.current
@@ -54,6 +63,28 @@ fun CreateStockScreen(
     var amount by rememberSaveable {
         mutableStateOf("")
     }
+    var date: Long? by rememberSaveable {
+        mutableStateOf(null)
+    }
+    val mCalendar by rememberSaveable {
+        mutableStateOf(Calendar.getInstance())
+    }
+    val mYear: Int = mCalendar.get(Calendar.YEAR)
+    val mMonth: Int = mCalendar.get(Calendar.MONTH)
+    val mDay: Int = mCalendar.get(Calendar.DAY_OF_MONTH)
+    val mDatePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            mCalendar.set(Calendar.HOUR_OF_DAY, 0)
+            mCalendar.set(Calendar.MINUTE, 0)
+            mCalendar.set(Calendar.SECOND, 0)
+            mCalendar.set(Calendar.MILLISECOND, 0)
+            mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            mCalendar.set(Calendar.YEAR, year)
+            mCalendar.set(Calendar.MONTH, month)
+            date = mCalendar.timeInMillis
+        }, mYear, mMonth, mDay
+    )
 
     fun createStock(
         withValidation: Boolean = true,
@@ -68,7 +99,8 @@ fun CreateStockScreen(
                 supplierName = supplierName.ifEmpty { null },
                 amount = amount.toInt(),
                 purchasePrice = price.toLong(),
-                source = if (checkedState.value) StockSource.CUSTOMER else StockSource.SUPPLIER
+                source = if (checkedState.value) StockSource.CUSTOMER else StockSource.SUPPLIER,
+                expiredDate = date
             ),
             checkPrinter = checkPrinter
         )
@@ -207,6 +239,29 @@ fun CreateStockScreen(
                        amount = it
                    }
                )
+               Row(
+                   horizontalArrangement = Arrangement.spacedBy(12.dp),
+                   verticalAlignment = Alignment.CenterVertically
+               ) {
+                   Text(
+                       date?.formatDate("dd MMMM yyyy") ?: "Tanggal Kedaluwarsa",
+                       modifier = Modifier
+                           .weight(1f)
+                           .border(
+                               1.dp,
+                               if (date != null) Color.Black else Color.Gray,
+                               RoundedCornerShape(12.dp)
+                           )
+                           .padding(16.dp),
+                       color = if (date != null) Color.Black else Color.Gray
+                   )
+
+                   IconButton(onClick = {
+                       mDatePickerDialog.show()
+                   }) {
+                       Icon(Icons.Rounded.Event, contentDescription = null)
+                   }
+               }
            }
             LoadingView(isLoading)
             DefaultSnackbar(

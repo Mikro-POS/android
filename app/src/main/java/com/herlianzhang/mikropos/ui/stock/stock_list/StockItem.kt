@@ -6,7 +6,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Print
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,8 +23,8 @@ import com.herlianzhang.mikropos.vo.StockSource
 @Composable
 fun StockItem(
     stock: Stock,
-    onPrintClick: (() -> Unit)? = null,
-    onDeleteClick: (() -> Unit)? = null
+    onDeleteClick: (() -> Unit)? = null,
+    icon: @Composable () -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -45,9 +44,7 @@ fun StockItem(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = { onPrintClick?.invoke() }) {
-                    Icon(Icons.Rounded.Print, contentDescription = null, tint = MaterialTheme.colors.primary)
-                }
+                icon()
                 IconButton(onClick = { onDeleteClick?.invoke() }) {
                     Icon(Icons.Rounded.Delete, contentDescription = null, tint = MaterialTheme.colors.primary)
                 }
@@ -57,6 +54,9 @@ fun StockItem(
                 DetailItem(key = "Nama Pemasok", value = stock.supplierName ?: "-", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
             }
             DetailItem(key = "ID", value = "#${stock.id}", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            if (stock.expiredDate != null) {
+                DetailItem(key = "Kedaluwarsa", value = stock.expiredDate.formatDate("dd MMMM yyyy") ?: "-", paddingVertical = 12.dp, paddingHorizontal = 16.dp)
+            }
             Spacer(
                 modifier = Modifier
                     .height(1.dp)

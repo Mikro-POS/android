@@ -102,8 +102,7 @@ interface ApiService {
         @Path("product_id") productId: Int,
         @Query("limit") limit: Int = 10,
         @Query("page") page: Int = 1,
-        @Query("search") search: String = "",
-
+        @Query("is_expired") isExpired: Boolean
     ): Response<List<Stock>>
 
     @POST("stocks/{product_id}")
@@ -118,6 +117,13 @@ interface ApiService {
         @Path("product_id") productId: Int,
         @Path("stock_id") stockId: Int
     ): Response<Any?>
+
+    @POST("stocks/{product_id}/{stock_id}/refund")
+    suspend fun refundStock(
+        @Path("product_id") productId: Int,
+        @Path("stock_id") stockId: Int,
+        @Body data: RefundStock
+    ): Response<Stock>
 
     // transaction
     @GET("transactions")

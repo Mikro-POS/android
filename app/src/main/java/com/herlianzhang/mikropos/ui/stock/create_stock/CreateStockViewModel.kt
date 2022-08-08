@@ -52,8 +52,7 @@ class CreateStockViewModel @AssistedInject constructor(
     private val _event = Channel<CreateStockEvent>()
     val event: Flow<CreateStockEvent>
         get() = _event.receiveAsFlow()
-
-
+    
     fun createStock(
         data: CreateStock,
         checkPrinter: Boolean = true

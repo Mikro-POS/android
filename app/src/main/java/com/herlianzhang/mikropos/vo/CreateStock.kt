@@ -4,5 +4,6 @@ data class CreateStock(
     val supplierName: String?,
     val amount: Int,
     val purchasePrice: Long,
-    val source: StockSource
+    val source: StockSource,
+    val expiredDate: Long?
 )

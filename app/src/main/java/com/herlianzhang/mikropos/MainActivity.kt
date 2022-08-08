@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
         fun productListViewModelFactory(): ProductListViewModel.Factory
         fun customerDetailViewModelFactory(): CustomerDetailViewModel.Factory
         fun productDetailViewModelFactory(): ProductDetailViewModel.Factory
-        fun stockListViewModelFactory(): StockListViewModel.Factory
         fun createStockViewModelFactory(): CreateStockViewModel.Factory
         fun transactionDetailViewModelFactory(): TransactionDetailViewModel.Factory
     }

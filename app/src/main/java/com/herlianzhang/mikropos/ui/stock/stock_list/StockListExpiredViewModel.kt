@@ -6,33 +6,31 @@ import com.google.gson.Gson
 import com.herlianzhang.mikropos.api.ApiResult
 import com.herlianzhang.mikropos.api.LoadingState
 import com.herlianzhang.mikropos.repository.StockRepository
-import com.herlianzhang.mikropos.utils.UserPreferences
-import com.herlianzhang.mikropos.utils.extensions.getPrinter
-import com.herlianzhang.mikropos.utils.extensions.printFormattedText
-import com.herlianzhang.mikropos.utils.extensions.printValue
 import com.herlianzhang.mikropos.vo.ProductDetail
+import com.herlianzhang.mikropos.vo.RefundStock
 import com.herlianzhang.mikropos.vo.Stock
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class StockListViewModel @Inject constructor(
+class StockListExpiredViewModel @Inject constructor(
     private val stockRepository: StockRepository,
-    private val userPref: UserPreferences,
     private val gson: Gson
 ) : ViewModel(), StockListViewModelInterface {
     private val limit: Int = 20
     private var page: Int = 1
     private var isLastPage: Boolean = false
     private var fetchJob: Job? = null
+    private var refundJob: Job? = null
     private var product: ProductDetail? = null
 
     private val _stocks = MutableStateFlow(listOf<Stock>())
@@ -59,6 +57,10 @@ class StockListViewModel @Inject constructor(
     override val event: Flow<StockListEvent>
         get() = _event.receiveAsFlow()
 
+    private val _isDialogLoading = MutableStateFlow(false)
+    val isDialogLoading: StateFlow<Boolean>
+        get() = _isDialogLoading
+
     override fun loadMore() {
         if (isLastPage || fetchJob?.isActive == true)
             return
@@ -67,6 +69,7 @@ class StockListViewModel @Inject constructor(
     }
 
     override fun setData(productJSON: String) {
+
         if (product != null) return
         product = gson.fromJson(productJSON, ProductDetail::class.java)
         getStocks()
@@ -76,20 +79,6 @@ class StockListViewModel @Inject constructor(
         viewModelScope.launch {
             _isError.emit(false)
             getStocks()
-        }
-    }
-
-    fun printStock(item: Stock) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _isLoading.emit(true)
-            try {
-                val printer = userPref.getPrinter()
-                printer.printFormattedText(item.printValue(product!!))
-            } catch (e: Exception) {
-                _event.send(StockListEvent.ShowErrorSnackbar(e.message))
-            } finally {
-                _isLoading.emit(false)
-            }
         }
     }
 
@@ -103,7 +92,7 @@ class StockListViewModel @Inject constructor(
     private fun getStocks() {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
-            stockRepository.getStocks(product?.id ?: 0, page, limit).collect { result ->
+            stockRepository.getStocks(product?.id ?: 0, page, limit, true).collect { result ->
                 when (result) {
                     is ApiResult.Success -> handleSuccess(result.data ?: emptyList())
                     is ApiResult.Failed -> handleError()
@@ -149,6 +138,32 @@ class StockListViewModel @Inject constructor(
             is LoadingState.End -> {
                 _isLoadMore.emit(!isLastPage)
                 _isLoading.emit(false)
+            }
+        }
+    }
+
+    fun cancelRefund() {
+        viewModelScope.launch {
+            _isDialogLoading.emit(false)
+            refundJob?.cancel()
+        }
+    }
+
+    fun refundStock(productId: Int, stockId: Int, refundStock: RefundStock) {
+        refundJob?.cancel()
+        refundJob = viewModelScope.launch {
+            stockRepository.refundStock(productId, stockId, refundStock).collect { result ->
+                when (result) {
+                    is ApiResult.Success -> {
+                        _event.send(StockListEvent.Refresh)
+                        delay(100)
+                        _event.send(StockListEvent.SendResult)
+                    }
+                    is ApiResult.Failed -> {
+                        _event.send(StockListEvent.ShowErrorSnackbar(result.message))
+                    }
+                    is ApiResult.Loading -> _isDialogLoading.emit(result.state.value)
+                }
             }
         }
     }

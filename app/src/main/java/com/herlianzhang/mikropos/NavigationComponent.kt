@@ -3,8 +3,11 @@ package com.herlianzhang.mikropos
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -47,6 +50,7 @@ import com.herlianzhang.mikropos.ui.register.RegisterViewModel
 import com.herlianzhang.mikropos.ui.stock.create_stock.CreateStockScreen
 import com.herlianzhang.mikropos.ui.stock.create_stock.CreateStockViewModel
 import com.herlianzhang.mikropos.ui.stock.stock_help.StockHelpScreen
+import com.herlianzhang.mikropos.ui.stock.stock_list.StockListExpiredViewModel
 import com.herlianzhang.mikropos.ui.stock.stock_list.StockListScreen
 import com.herlianzhang.mikropos.ui.stock.stock_list.StockListViewModel
 import com.herlianzhang.mikropos.ui.transaction.transaction_detail.TransactionDetailScreen
@@ -161,8 +165,15 @@ fun NavigationComponent(
             arguments = listOf(navArgument("product") { type = NavType.StringType })
         ) { backStackEntry ->
             backStackEntry.arguments?.getString("product")?.let { product ->
-                val viewModel = StockListViewModel.getViewModel(product)
-                StockListScreen(navController, viewModel)
+                val viewModel = hiltViewModel<StockListViewModel>()
+                viewModel.setData(product)
+                val expiredViewModel = hiltViewModel<StockListExpiredViewModel>()
+                expiredViewModel.setData(product)
+                val viewModels = listOf(
+                    viewModel,
+                    expiredViewModel
+                )
+                StockListScreen(navController, viewModels, product)
             }
         }
         composable(

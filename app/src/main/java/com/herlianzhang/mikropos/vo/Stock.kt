@@ -9,6 +9,7 @@ data class Stock(
     val purchasePrice: Long?,
     val source: StockSource?,
     val supplier: Supplier?,
+    val expiredDate: Long?,
     val createdAt: Long?,
 ) {
     val sourceString: String
