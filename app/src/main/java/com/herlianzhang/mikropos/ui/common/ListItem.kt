@@ -24,17 +24,22 @@ fun ListItem(
     subtitle: String?,
     modifier: Modifier = Modifier,
     caption: String? = null,
-    onClicked: () -> Unit
+    onClicked: (() -> Unit)? = null
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
+    val mainModifier = if (onClicked != null) {
+        modifier.clip(RoundedCornerShape(12.dp))
             .clickable {
                 onClicked()
             }
             .padding(horizontal = 12.dp, vertical = 8.dp)
+    } else {
+        modifier.clip(RoundedCornerShape(12.dp))
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+    }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = mainModifier
     ) {
         AsyncImage(
             model = photo,

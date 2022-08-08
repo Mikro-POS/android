@@ -24,10 +24,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlin.math.min
 
 class ProductListViewModel @AssistedInject constructor(
     @Assisted
-    private val isSelectMode: Boolean,
+    val isSelectMode: Boolean,
     private val productRepository: ProductRepository,
     private val cartRepository: CartRepository
 ): ViewModel() {
@@ -118,7 +119,7 @@ class ProductListViewModel @AssistedInject constructor(
                     name = product.name,
                     price = product.price,
                     photo = product.photo,
-                    amount = dbCart?.amount?.plus(1) ?: 1
+                    amount = min(product.totalStock ?: 0, dbCart?.amount?.plus(1) ?: 1)
                 )
                 cartRepository.insertCart(cart)
             } else {

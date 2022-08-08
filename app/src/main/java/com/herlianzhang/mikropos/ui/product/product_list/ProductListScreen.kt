@@ -162,10 +162,21 @@ fun ProductListScreen(
                                 item.price?.toRupiah(),
                                 Modifier.animateItemPlacement(),
                                 "persediaan ${item.totalStock} kotak",
-                                onClicked = {
-                                    viewModel.onClickProduct(index, item)
+                                onClicked = if (viewModel.isSelectMode && item.totalStock == 0) null
+                                else {
+                                    { viewModel.onClickProduct(index, item) }
                                 }
                             )
+
+                            if (item.totalStock == 0) {
+                                Text(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .padding(horizontal = 8.dp),
+                                    text = "Habis",
+                                    color = Color.Red
+                                )
+                            }
 
                             androidx.compose.animation.AnimatedVisibility(
                                 animatedIndex.contains(index),
