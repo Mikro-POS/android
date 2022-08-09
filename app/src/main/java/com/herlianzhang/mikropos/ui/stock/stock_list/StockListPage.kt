@@ -24,7 +24,8 @@ import timber.log.Timber
 fun StockListPage(
     navController: NavController,
     scaffoldState: ScaffoldState,
-    viewModel: StockListViewModelInterface
+    viewModel: StockListViewModelInterface,
+    onRefresh: () -> Unit
 ) {
     val listState = rememberLazyListState()
     val stocks by viewModel.stocks.collectAsState()
@@ -33,10 +34,10 @@ fun StockListPage(
     val isLoadMore by viewModel.isLoadMore.collectAsState()
     val isError by viewModel.isError.collectAsState()
     var showAlertConfirmation by remember { mutableStateOf(Pair(false, -1)) }
-    var isShowDialog by rememberSaveable {
+    var isShowDialog by remember {
         mutableStateOf(false)
     }
-    var selectedStock: Stock? by rememberSaveable {
+    var selectedStock: Stock? by remember {
         mutableStateOf(null)
     }
 
@@ -55,7 +56,7 @@ fun StockListPage(
                 }
                 is StockListEvent.Refresh -> {
                     isShowDialog = false
-                    viewModel.refresh()
+                    onRefresh()
                 }
             }
         }

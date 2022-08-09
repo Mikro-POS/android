@@ -105,7 +105,17 @@ fun StockListScreen(
                     count = viewModels.size,
                     state = pagerState
                 ) { index ->
-                    StockListPage(navController, scaffoldState, viewModels[index])
+                    StockListPage(
+                        navController,
+                        scaffoldState,
+                        viewModels[index]
+                    ) {
+                        viewModels.forEach {
+                            coroutineScope.launch {
+                                it.refresh()
+                            }
+                        }
+                    }
                 }
             }
             DefaultSnackbar(

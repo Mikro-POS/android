@@ -47,10 +47,10 @@ fun RefundDialog(
     var value by remember {
         mutableStateOf("")
     }
-    var date: Long? by rememberSaveable {
+    var date: Long? by remember {
         mutableStateOf(null)
     }
-    val mCalendar by rememberSaveable {
+    val mCalendar by remember {
         mutableStateOf(Calendar.getInstance())
     }
     val mYear: Int = mCalendar.get(Calendar.YEAR)
