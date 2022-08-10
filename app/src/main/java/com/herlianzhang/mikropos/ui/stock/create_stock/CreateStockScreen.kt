@@ -84,7 +84,18 @@ fun CreateStockScreen(
             mCalendar.set(Calendar.MONTH, month)
             date = mCalendar.timeInMillis
         }, mYear, mMonth, mDay
-    )
+    ).also { dialog ->
+        if (!checkedState.value) {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = System.currentTimeMillis()
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+            dialog.datePicker.minDate = calendar.timeInMillis
+        }
+    }
 
     fun createStock(
         withValidation: Boolean = true,
@@ -169,6 +180,7 @@ fun CreateStockScreen(
                    Switch(
                        checked = checkedState.value,
                        onCheckedChange = {
+                            date = null
                             checkedState.value = it
                        }
                    )
