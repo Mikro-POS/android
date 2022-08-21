@@ -255,17 +255,21 @@ fun CreateStockScreen(
                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                    verticalAlignment = Alignment.CenterVertically
                ) {
-                   Text(
-                       date?.formatDate("dd MMMM yyyy") ?: "Tanggal Kedaluwarsa",
+                   OutlinedTextField(
                        modifier = Modifier
-                           .weight(1f)
-                           .border(
-                               1.dp,
-                               if (date != null) Color.Black else Color.Gray,
-                               RoundedCornerShape(12.dp)
-                           )
-                           .padding(16.dp),
-                       color = if (date != null) Color.Black else Color.Gray
+                           .weight(1f),
+                       value = date?.formatDate("dd MMMM yyyy") ?: "",
+                       enabled = false,
+                       shape = RoundedCornerShape(12.dp),
+                       label = {
+                           Text("Tanggal kedaluwarsa")
+                       },
+                       onValueChange = {},
+                       colors = TextFieldDefaults.textFieldColors(
+                           disabledLabelColor = Color.Gray,
+                           backgroundColor = Color.Transparent,
+                           disabledTextColor = Color.Black
+                       )
                    )
 
                    IconButton(onClick = {
