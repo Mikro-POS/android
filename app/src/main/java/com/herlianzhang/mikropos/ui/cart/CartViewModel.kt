@@ -3,7 +3,7 @@ package com.herlianzhang.mikropos.ui.cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.herlianzhang.mikropos.db.cart.Cart
-import com.herlianzhang.mikropos.repository.CartRepository
+import com.herlianzhang.mikropos.repository.CardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartRepository: CartRepository
+    private val cartRepository: CardRepository
 ) : ViewModel() {
     val carts: Flow<List<Cart>>
         get() = cartRepository.carts

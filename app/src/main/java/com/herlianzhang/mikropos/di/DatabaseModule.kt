@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import com.herlianzhang.mikropos.db.AppDatabase
 import com.herlianzhang.mikropos.db.cart.CartDao
+import com.herlianzhang.mikropos.repository.CardRepository
+import com.herlianzhang.mikropos.repository.CartRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,4 +22,7 @@ object DatabaseModule {
     @Provides
     fun provideCartDao(db: AppDatabase): CartDao =
         db.cartDao()
+
+    @Provides
+    fun provideCardRepository(dao: CartDao): CardRepository = CartRepository(dao)
 }
